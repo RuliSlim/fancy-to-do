@@ -8,17 +8,25 @@ class TodoController {
       })
       .catch((err) => {
         res.status(500).json(err);
-      })
+      });
   }
 
   static getOne(req, res) {
     Todo.findOne({where: {id: req.params.id}})
       .then((todo) => {
-        res.status(200).json(todo);
+        if(todo) {
+          res.status(200).json(todo);
+        } else {
+          throw new Error('Todo not found');
+        }
       })
       .catch((err) => {
-        res.status(404).json(err);
-      })
+        if(err.message === 'Todo not found') {
+          res.status(404).json({error: err.message});
+        } else {
+          res.status(500).json(err);
+        }
+      });
   }
   
   static create(req, res) {
@@ -37,7 +45,7 @@ class TodoController {
         } else {
           res.status(500).json(err);
         }
-      })
+      });
   }
 
   static updateAll(req, res) {
@@ -57,12 +65,14 @@ class TodoController {
           if (todo[1].length) {
             res.status(200).json(todo);
           } else {
-            res.status(404).json({message: 'Todo not found'});
+            throw new Error('Todo not found');
           }
         })
         .catch(err => {
           if (err.name === 'SequelizeValidationError') {
             res.status(400).json(err);
+          } else if (err.message == 'Todo not found') {
+            res.status(404).json({error: err.message});
           } else {
             res.status(500).json(err);
           }
@@ -86,15 +96,14 @@ class TodoController {
         }
         throw new Error('Not Found property with name ' + key);
       })
-      .catch(err => {
-        res.status(404).json({err: err.message});
-      })
       .then(todo => {
         res.status(200).json(todo);
       })
       .catch(err => {
         if (err.name === 'SequelizeValidationError') {
           res.status(400).json(err);
+        } else if (err.name) {
+          res.status(404).json({error: err.message});
         } else {
           res.status(500).json(err);
         }
@@ -102,17 +111,26 @@ class TodoController {
   }
 
   static deleteOne(req, res) {
-    Todo.destroy({where: {id: req.params.id}, returning: true})
+    let deletedTodo;
+    Todo.findByPk(req.params.id)
       .then(todo => {
         if (todo) {
-          res.status(200).json({todo});
+          deletedTodo = todo;
+          return Todo.destroy({where: {id: req.params.id}, returning: true});
         } else {
-          res.status(404).json({message: 'Todo not found'});
+          throw new Error('Todo not found');
         }
       })
-      .catch(err  => {
-        res.status(500).json(err);
+      .then(todo => {
+        res.status(200).json(deletedTodo);
       })
+      .catch(err  => {
+        if (err.message == 'Todo not found') {
+          res.status(404).json({error: err.message});
+        } else {
+          res.status(500).json(err);
+        }
+      });
   }
 }
 
