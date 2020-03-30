@@ -92,7 +92,7 @@ _Response (400 - Bad Request)_
     "name": "SequelizeValidationError",
     "errors": [
         {
-            "message": "todo.title cannot be null",
+            "message": "Title cannot be null",
             "type": "notNull Violation",
             "path": "title",
             "value": null,
@@ -100,8 +100,9 @@ _Response (400 - Bad Request)_
             "instance": {
                 "status": false,
                 "id": null,
-                "updatedAt": "2020-03-30T10:25:56.339Z",
-                "createdAt": "2020-03-30T10:25:56.339Z"
+                "description": "desc kedua553335",
+                "updatedAt": "2020-03-30T15:09:25.010Z",
+                "createdAt": "2020-03-30T15:09:25.010Z"
             },
             "validatorKey": "is_null",
             "validatorName": null,

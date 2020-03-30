@@ -6,10 +6,15 @@ class todo extends Model {};
 todo.init({
   title: {
     type: DataTypes.STRING,
-    // allowNull: false,
+    allowNull: false,
     validate: {
       notEmpty: {
+        args: true,
         msg: 'Title cannot be empty'
+      },
+      notNull: {
+        args: true,
+        msg: 'Title cannot be null'
       }
     }
   },
