@@ -1,13 +1,13 @@
-const {Todo} = require('../models')
+const {Todo} = require('../models');
 
 class TodoController {
   static getAll(req, res) {
     Todo.findAll()
       .then((todos) => {
-        res.status(200).json(todos)
+        res.status(200).json(todos);
       })
       .catch((err) => {
-        res.status(500).json(err)
+        res.status(500).json(err);
       })
   }
 
@@ -22,26 +22,26 @@ class TodoController {
   }
   
   static create(req, res) {
-    const {title, description, due_date} = req.body
+    const {title, description, due_date} = req.body;
     Todo.create({
       title,
       description,
       due_date
     })
       .then(todo => {
-        res.status(201).json(todo)
+        res.status(201).json(todo);
       })
       .catch(err => {
         if (err.name === 'SequelizeValidationError') {
-          res.status(400).json(err)
+          res.status(400).json(err);
         } else {
-          res.status(500).json(err)
+          res.status(500).json(err);
         }
       })
   }
 
   static updateAll(req, res) {
-    const {title, description, due_date, status} = req.body
+    const {title, description, due_date, status} = req.body;
     Todo.update(
       {
         title: title,
@@ -52,50 +52,52 @@ class TodoController {
       {
         where: {id: req.params.id},
         returning: true
-      }
-      )
+      })
         .then(todo => {
           if (todo[1].length) {
-            res.status(200).json(todo)
+            res.status(200).json(todo);
           } else {
-            res.status(404).json({message: 'Todo not found'})
+            res.status(404).json({message: 'Todo not found'});
           }
         })
         .catch(err => {
           if (err.name === 'SequelizeValidationError') {
-            res.status(400).json(err)
+            res.status(400).json(err);
           } else {
-            res.status(500).json(err)
+            res.status(500).json(err);
           }
         })
   }
 
   static updateOne(req, res) {
-    const {id, key} = req.params
-    const reqBody = req.body
+    const {id, key} = req.params;
     Todo.findByPk(id)
       .then(todo => {
-        Object.keys(todo.dataValues).forEach(el => {
-          if (key === el) {
+        for (let i = 0; i < Object.keys(todo.dataValues).length; i++) {
+          if (key ==  Object.keys(todo.dataValues)[i]) {
             return Todo.update(
-              reqBody,
+              req.body,
               {
                 where: {id: req.params.id},
                 returning: true
               }
-            )
-          } else {
-            return res.status(404).json({message: 'Not Found property with name ' + key})
-          }
-        })
-      })
-      .then(todo => {
-        // console.log(todo, 'IKI') 
-        // Ini kenapa ga me-return hasil todo yang baru di update ya? padahal udah dikasih option returning true
-        res.status(200).json(todo)
+            );
+          };
+        }
+        throw new Error('Not Found property with name ' + key);
       })
       .catch(err => {
-        res.status(500).json(err)
+        res.status(404).json({err: err.message});
+      })
+      .then(todo => {
+        res.status(200).json(todo);
+      })
+      .catch(err => {
+        if (err.name === 'SequelizeValidationError') {
+          res.status(400).json(err);
+        } else {
+          res.status(500).json(err);
+        }
       })
   }
 
@@ -103,15 +105,15 @@ class TodoController {
     Todo.destroy({where: {id: req.params.id}, returning: true})
       .then(todo => {
         if (todo) {
-          res.status(200).json({todo})
+          res.status(200).json({todo});
         } else {
-          res.status(404).json({message: 'Todo not found'})
+          res.status(404).json({message: 'Todo not found'});
         }
       })
       .catch(err  => {
-        res.status(500).json(err)
+        res.status(500).json(err);
       })
   }
 }
 
-module.exports = TodoController
+module.exports = TodoController;

@@ -1,8 +1,8 @@
-const TodoController = require('./todo')
+const TodoController = require('./todo');
 
 class IndexController {
   static getAll(req, res) {
-    res.send('Home Page')
+    res.send('Home Page');
   }
 }
 
