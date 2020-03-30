@@ -55,7 +55,7 @@ class TodoController {
       }
       )
         .then(todo => {
-          if (todo) {
+          if (todo[1].length) {
             res.status(200).json(todo)
           } else {
             res.status(404).json({message: 'Todo not found'})
@@ -103,7 +103,7 @@ class TodoController {
     Todo.destroy({where: {id: req.params.id}, returning: true})
       .then(todo => {
         if (todo) {
-          res.status(200).json(todo)
+          res.status(200).json({todo})
         } else {
           res.status(404).json({message: 'Todo not found'})
         }
