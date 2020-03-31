@@ -1,3 +1,4 @@
+const uuid = require('uuid');
 const {User} = require('../models');
 const {signToken} = require('../helpers/jwt');
 const {compare} = require('../helpers/bcrypt');
@@ -6,13 +7,14 @@ class AuthController {
   static register(req, res, next) {
     const {name, email, password} = req.body
     User.create({
+      id: uuid(),
       name,
       email,
       password
     })
       .then(user => {
-        console.log(user, 'Ini user')
         const token = signToken(user);
+        console.log(token, 'Ini user')
         res.status(201).json({user, access_token: token});
       })
       .catch(err => next(err));

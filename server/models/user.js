@@ -3,8 +3,8 @@ const {sequelize}         = require('./index');
 const {Model, DataTypes}  = require('sequelize');
 const {hashedPassword}    = require('../helpers/bcrypt')
 
-class user extends Model {}
-user.init({
+class User extends Model {}
+User.init({
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -63,4 +63,8 @@ user.init({
     }
   }, sequelize})
 
-module.exports = user
+User.associate = function (models, options) {
+  User.hasMany(models.Todo)
+}
+
+module.exports = User

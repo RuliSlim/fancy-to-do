@@ -2,8 +2,8 @@
 const {sequelize}         = require('./index');
 const {Model, DataTypes}  = require('sequelize');
 
-class todo extends Model {};
-todo.init({
+class Todo extends Model {};
+Todo.init({
   title: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -28,9 +28,27 @@ todo.init({
   },
   due_date: {
     type: DataTypes.DATE
+  },
+  UserId: {
+    type: DataTypes.UUID,
+    allowNull: false,
+    validate: {
+      notNull: {
+        args: true,
+        msg: 'You have to login'
+      },
+      notEmpty: {
+        args: true,
+        msg: 'You have to login'
+      }
+    }
   }
 }, {
   sequelize
 });
 
-module.exports = todo
+Todo.associate = function(models) {
+  Todo.belongsTo(models.User);
+}
+
+module.exports = Todo

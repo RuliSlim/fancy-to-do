@@ -3,7 +3,7 @@ const uuid = require('uuid/v4')
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('users', {
+    return queryInterface.createTable('Users', {
       id: {
         allowNull: false,
         primaryKey: true,
@@ -17,10 +17,7 @@ module.exports = {
       email: {
         type: Sequelize.STRING,
         allowNull: false,
-        unique: {
-          args: true,
-          msg: 'Email already taken'
-        }
+        unique: true
       },
       password: {
         type: Sequelize.STRING,
@@ -37,6 +34,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('users');
+    return queryInterface.dropTable('Users');
   }
 };

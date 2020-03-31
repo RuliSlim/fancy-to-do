@@ -1,10 +1,33 @@
-const {Todo} = require('../models');
+const {Todo, User}  = require('../models');
+const axios         = require('axios');
+const key           = require('../config/config.json').rrs.key
+const queryString   = require('query-string');
 
 class TodoController {
   static getAll(req, res, next) {
-    Todo.findAll()
+    let text = 'Your Todo list are'
+    const parameters = {
+      key: key,
+      src: text,
+      hl: 'en-us',
+      b64: true
+    }
+    const UserId = req.user.sub;
+    Todo.findAll({where: {UserId}})
       .then((todos) => {
-        res.status(200).json(todos);
+        todos.forEach(el => text += el.title + ', ');
+        parameters.src = text;
+        return axios({
+          methods: 'POST',
+          url: 'https://api.voicerss.org/?' + queryString.stringify(parameters),
+          headers: {'content-type': 'application/x-www-form-urlencoded'}    
+        })
+      })
+      .then(response => {
+        res.status(200).send(`<audio controls
+        src=${response.data} >
+       </audio>
+       `)
       })
       .catch((err) => {
         next(err);
@@ -12,7 +35,8 @@ class TodoController {
   }
 
   static getOne(req, res, next) {
-    Todo.findOne({where: {id: req.params.id}})
+    const UserId = req.user.sub;
+    Todo.findOne({where: {id: req.params.id, UserId}})
       .then((todo) => {
         if(todo) {
           res.status(200).json(todo);
@@ -27,11 +51,20 @@ class TodoController {
   
   static create(req, res, next) {
     const {title, description, due_date} = req.body;
-    Todo.create({
-      title,
-      description,
-      due_date
-    })
+    const UserId = req.user.sub;
+    User.findOne({where: {id: UserId}})
+      .then(user => {
+        if (!user) {
+          throw new Error('User not found, please relogin')
+        }
+
+        return Todo.create({
+          title,
+          description,
+          due_date,
+          UserId
+        })
+      })
       .then(todo => {
         res.status(201).json(todo);
       })
@@ -42,6 +75,7 @@ class TodoController {
 
   static updateAll(req, res, next) {
     const {title, description, due_date, status} = req.body;
+    const UserId = req.user.sub;
     Todo.update(
       {
         title: title,
@@ -50,7 +84,7 @@ class TodoController {
         status: status || false
       },
       {
-        where: {id: req.params.id},
+        where: {id: req.params.id, UserId},
         returning: true
       })
         .then(todo => {
@@ -67,6 +101,7 @@ class TodoController {
 
   static updateOne(req, res, next) {
     const {id, key} = req.params;
+    const UserId = req.user.sub;
     Todo.findByPk(id)
       .then(todo => {
         if (!todo) {
@@ -78,7 +113,7 @@ class TodoController {
             return Todo.update(
               req.body,
               {
-                where: {id: req.params.id},
+                where: {id: req.params.id, UserId},
                 returning: true
               }
             );
@@ -96,7 +131,8 @@ class TodoController {
 
   static deleteOne(req, res, next) {
     let deletedTodo;
-    Todo.findByPk(req.params.id)
+    const UserId = req.user.sub;
+    Todo.findOne({where: {id: req.params.id, UserId}})
       .then(todo => {
         if (todo) {
           deletedTodo = todo;

@@ -19,3 +19,5 @@ module.exports = db;
 
 db.Todo = require('./todo')
 db.User = require('./user')
+db.User.hasMany(db.Todo)
+db.Todo.belongsTo(db.User)
