@@ -1,6 +1,6 @@
-const {User} = require('../models')
-const signToken = require('../helpers/jwt')
-const {compare} = require('../helpers/bcrypt')
+const {User} = require('../models');
+const {signToken} = require('../helpers/jwt');
+const {compare} = require('../helpers/bcrypt');
 
 class AuthController {
   static register(req, res, next) {
@@ -13,7 +13,7 @@ class AuthController {
       .then(user => {
         console.log(user, 'Ini user')
         const token = signToken(user);
-        res.status(201).json({user, usertoken: token});
+        res.status(201).json({user, access_token: token});
       })
       .catch(err => next(err));
   }
@@ -28,7 +28,7 @@ class AuthController {
 
         const token = signToken(user);
         if (compare(password, user.password)) {
-          res.status(200).json({name: user.name, token});
+          res.status(201).json({user, access_token: token});
         }
 
         throw new Error('Email or Password incorrect');

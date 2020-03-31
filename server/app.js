@@ -9,7 +9,7 @@ app.use(express.urlencoded({extended: true}))
 app.use(require('./routes/index'))
 
 // middlewares errorHandler
-app.use(require('./helpers/error_handler'))
+app.use(require('./middlewares').errorHandler)
 
 // start app
 app.listen(PORT, () => console.log(`Server start on port ${PORT}`))
