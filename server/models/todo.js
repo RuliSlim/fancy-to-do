@@ -14,7 +14,7 @@ todo.init({
       },
       notNull: {
         args: true,
-        msg: 'Title cannot be null'
+        msg: 'Title cannot be empty'
       }
     }
   },

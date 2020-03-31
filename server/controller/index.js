@@ -1,4 +1,5 @@
 const TodoController = require('./todo');
+const AuthController = require('./auth')
 
 class IndexController {
   static getAll(req, res) {
@@ -8,5 +9,6 @@ class IndexController {
 
 module.exports = {
   IndexController,
-  TodoController
+  TodoController,
+  AuthController
 }

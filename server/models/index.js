@@ -18,3 +18,4 @@ db.Sequelize = Sequelize;
 module.exports = db;
 
 db.Todo = require('./todo')
+db.User = require('./user')
