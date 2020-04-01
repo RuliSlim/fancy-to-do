@@ -1,15 +1,53 @@
 $( document ).ready(function() {
-  $('#main-body').html(forms);
+  let show = false;
+
+  $('.main-body, .user').hide();
+  let token = localStorage.getItem('access_token') || null;
+  if(token) {
+    loggedIn()
+  } else {
+    $('#login, #register').show();
+    let showUserRegister = true
+    let showUserLogin = false
+    $('#login').click(function() {
+      showUserRegister = !showUserRegister
+      showUserLogin = !showUserLogin
+      if (showUserRegister) {
+        $('#register-form').hide()
+        $('#login-form').show()
+      } else {
+        $('#register-form').hide()
+        $('#login-form').hide()
+      }
+    });
+    $('#register').click(function() {
+      showUserLogin = !showUserLogin
+      showUserRegister = !showUserRegister
+      if (showUserLogin) {
+        $('#register-form').show()
+        $('#login-form').hide()
+      } else {
+        $('#register-form').hide()
+        $('#login-form').hide()
+      }
+    });
+    // $('#voice').remove();
+    // $('#content').empty();
+    // $('#form-todo').hide();
+    // $('#form-todo').empty();
+    // $('#table').show()
+  }
+
+  // Show form Todo
 
   // REGISTER FUNCTION
   $( "#form-register" ).submit(function( event ) {
-    alert( "Handler for .submit() called." );
     event.preventDefault();
-    console.log(this.e)
     let name = $('#first_name').val();
     let last_name = $('#last_name').val();
     let email = $('#email').val();
     let password = $('#password').val();
+    console.log(name, email, password)
     $.ajax({
       url: 'http://localhost:3000/auth/register',
       method: 'POST',
@@ -19,20 +57,24 @@ $( document ).ready(function() {
         password
       }
     })
-    .done((result)=> {
-      alert('BERHASIL');
-      localstorage.setItem('access_token', response.access_token)
-      token = localstorage.access_token
-      console.log(result, 'RESUL NIH');
-      forms = `Berhasil register`;
-      $('#main-body').html(forms);
+    .done(result => {
+        localStorage.setItem('access_token', result.access_token)
+        token = localStorage.access_token
+        console.log(result, 'RESUL NIH');
+        location.reload();
+        $('#alert').empty();
       }
     )
-    .fail((error) => {
-      alert('Gagal');
+    .fail(error => {
       console.log(error, 'ERROR INI')
-      forms = `Gagal register`;
-      $('#main-body').html(forms);
+      let errors = error.responseJSON.errors
+      errors.forEach(el => {
+        $('#alert').append(`
+          <div class="alert alert-primary" role="alert">
+            ${el.message}
+          </div>
+        `)
+      })
       }
     )
   });
@@ -51,30 +93,41 @@ $( document ).ready(function() {
       data: {email, password}
     })
     .done((result) => {
-      alert('Login');
       let {access_token} = result
       console.log(result)
       console.log(access_token)
       localStorage.setItem('access_token', access_token)
-      alert(localStorage.getItem('access_token'))
-      forms = `Berhasil Login
-      <button class="btn btn-primary" id="view-todos">See your todos</button>
-      `
-      $('#main-body').html(forms);
+      location.reload();
+      $('#alert').empty();
     })
-    .fail((err) => {
-      alert('Gagal Login')
+    .fail(err => {
       console.log(err, 'Error')
-      forms = 'Gagal Login'
-      $('#main-body').html(forms);
+      let errors = err.responseJSON.errors
+      errors.forEach(el => {
+        $('#alert').append(`
+          <div class="alert alert-primary" role="alert">
+            ${el.message}
+          </div>
+        `)
+      })
     })
   })
 
-  // View todos
-  $('#view-todos').click(function(e){
-    alert('Yo')
+  // LOGOUT FUNCTION
+  $('#logout').click(function(e) {
     e.preventDefault();
-    let token = localStorage.getItem('access_token')
+    localStorage.removeItem('access_token');
+    location.reload();
+  })
+
+  // REFRESH FUNCTION
+  function loggedIn() {
+    $('#list-todo, #logout').show();
+    $('#voice').remove();
+    $('#content').empty();
+    $('#form-todo').hide();
+    $('#form-todo').empty();
+    $('#table').show()
     $.ajax({
       url: 'http://localhost:3000/todos',
       method: 'GET',
@@ -82,143 +135,157 @@ $( document ).ready(function() {
         access_token: token
       }
     })
-      .done(result => {
-        console.log(result)
+    .done(result => {
+      $('#table').append(`
+        <audio controls id="voice">
+          <source src="${result.voice}" type="audio/mpeg">
+        </audio>
+      `);
+      result.todo.forEach(el => {
+        $('#content').append(
+          `
+            <tr>
+              <th>${el.id}</th>
+              <td>${el.title}</td>
+              <td>${el.description}</td>
+              <td>${moment(el.due_date).format('MMM Do YY, h:mm a')}</td>
+              <td>
+                <button class="btn btn-warning" value="${el.id}" id="edit">Edit</button>
+                <button class="btn btn-danger" value="${el.id}" id="delete">Delete</button>
+              </td>
+            </tr>
+          `
+        )
+      });
+      $('#alert').empty();
+    })
+    .fail(err => {
+      console.log(err)
+      let errors = err.responseJSON.errors
+      errors.forEach(el => {
+        $('#alert').append(`
+          <div class="alert alert-primary" role="alert">
+            ${el.message}
+          </div>
+        `)
       })
-      .fail(err => {
-        console.log(err)
-      })
-  })
-  
-  function refreshPage() {
-    let forms = `BERUBAH CUK`;
-    $('#main-body').html(forms);
+    })
   }
-//   $("#form-register").bind("submit",function(e){
-//     alert('yo')
-//     e.preventDefault();
- 
-//     var ajaxurl = $(this).attr("action");
- 
-//     var data = $(this).serialize();
- 
-//     $.post(ajaxurl,data,function(res){
- 
-//         $("#message").html(res.message);
- 
-//     },'json');
-//  });
+
+  // SHOW FORM ADD
+  $('#show-form-todo').click(function() {
+    show = !show
+    if (show) {
+      $('#form-todo').show();
+      $('#form-todo').append(`
+        <form id="form-add-todo">
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" id="title-todo" name="title" placeholder="Title">
+          </div>
+          <div class="form-group">
+            <label for="description-todo">Desciption</label>
+            <textarea class="form-control" id="description-todo" name="desciption" placeholder="Desciption"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Register</button>
+        </form>
+      `);
+      $('#table').hide()
+      $('#form-todo').on('submit', '#form-add-todo', function(e) {
+        e.preventDefault();
+        ajaxFunction('POST')
+      })
+    } else {
+      $('#form-todo').hide();
+      $('#form-todo').empty();
+      $('#table').show();
+    }
+  })
+
+  // DELETE
+  $('#content').on('click', '#delete', function(e) {
+    console.log(e.currentTarget.value)
+    ajaxFunction('DELETE', e.currentTarget.value)
+  })
+
+  // SHOW EDIT TODO
+  $('#content').on('click', '#edit', function(e) {
+    $.ajax({
+      url: 'http://localhost:3000/todos/' + e.currentTarget.value,
+      method: 'GET',
+      headers: {
+        access_token: token
+      }
+    })
+    .done(result => {
+      $('#form-todo').append(`
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input type="text" class="form-control" id="title-todo" name="title" value="${result.title}">
+        </div>
+        <div class="form-group">
+          <label for="description-todo">Desciption</label>
+          <textarea class="form-control" id="description-todo" name="desciption" placeholder="Desciption">${result.description}</textarea>
+        </div>
+        <button id="form-edit" value="${result.id}" class="btn btn-primary btn-block">Edit</button>
+      `);
+      $('#form-todo').show();
+      $('#table').hide();
+      $('#alert').empty();
+    })
+    .fail(err => {
+      let errors = err.responseJSON.errors
+      errors.forEach(el => {
+        $('#alert').append(`
+          <div class="alert alert-primary" role="alert">
+            ${el.message}
+          </div>
+        `)
+      })
+    })
+  })
+  // PUT FUNCTION
+  $('#form-todo').on('click', '#form-edit', function(e) {
+    e.preventDefault();
+    ajaxFunction('PUT', e.currentTarget.value)
+  })
+
+  function ajaxFunction(type='POST', id=0) {
+    let url
+    if(type == 'POST') {
+      url = 'http://localhost:3000/todos'
+    } else {
+      url = 'http://localhost:3000/todos/' + id
+    }
+    let title = $('#title-todo').val();
+    let description = $('#description-todo').val();
+    let due_date = $('#due-date-todo').val() || new Date(Date.now());    
+    // console.log(title)
+    // console.log(description)
+    $.ajax({
+      url: url,
+      method: type,
+      data: {title, description, due_date},
+      headers: {
+        access_token: token
+      }
+    })
+    .done(result => {
+      console.log(result)
+      loggedIn();
+      $('#alert').empty();
+    })
+    .fail(err => {
+      console.log(err)
+      let errors = err.responseJSON.errors
+      errors.forEach(el => {
+        $('#alert').append(`
+          <div class="alert alert-primary" role="alert">
+            ${el.message}
+          </div>
+        `)
+      })
+    })
+  }
 });
-
-const registerForm = `
-<div class="m-5">
-  <div class="form-head">
-      <h5>REGISTER</h5>
-  </div>
-  <div class="form-body p-3">
-    <form id="form-register" >
-        <div class="form-group">
-          <label for="first_name">First Name</label>
-          <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter your first name">
-        </div>
-        <div class="form-group">
-          <label for="first_name">Last Name</label>
-          <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter your last name">
-        </div>
-        <div class="form-group">
-          <label for="email">Email address</label>
-          <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email">
-          <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-        </div>
-      <button type="submit" class="btn btn-primary btn-block">Register</button>
-    </form>
-  </div>
-</div>
-`
-
-const loginForm = `
-<div class="m-5">
-  <div class="form-head">
-      <h5>LOGIN</h5>
-  </div>
-  <div class="form-body p-3">
-    <form id="form-login">
-        <div class="form-group">
-          <label for="email">Email address</label>
-          <input type="email" class="form-control" id="email2" name="email" aria-describedby="emailHelp" placeholder="Enter email">
-          <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-        </div>
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" class="form-control" id="password2" name="password" placeholder="Password">
-        </div>
-      <button type="submit" class="btn btn-primary btn-block">Register</button>
-    </form>
-  </div>
-</div>
-`
-
-const googleForm = `
-
-`
-
-let forms = `
-<div class="accordion m-5" id="accordionExample">
-  <div class="card d-flex flex-row">
-    <div class="card-header" id="headingOne">
-      <h2 class="mb-0">
-        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          Register
-        </button>
-      </h2>
-    </div>
-    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-      <div class="card-body">
-        ${registerForm}
-      </div>
-    </div>
-  </div>
-  <div class="card d-flex flex-row">
-    <div class="card-header" id="headingTwo">
-      <h2 class="mb-0">
-        <button class="btn btn-primary collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-          Login
-        </button>
-      </h2>
-    </div>
-    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
-      <div class="card-body">
-        ${loginForm}
-      </div>
-    </div>
-  </div>
-  <div class="card d-flex flex-row">
-    <div class="card-header" id="headingThree">
-      <h2 class="mb-0">
-        <button class="btn btn-primary collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-          Login With Google
-        </button>
-      </h2>
-    </div>
-    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
-      <div class="card-body">
-        ${googleForm}
-      </div>
-    </div>
-  </div>
-</div>
-`
-
-let loggedIn =`<p>Sekarang kalau diklik berubah ga?</p>`
-
-// $('.coba').submit(function(e) { 
-//   e.preventDefault();
-//   alert('Yo')
-//   console.log(e)
-//   refreshPage();
-// });
 

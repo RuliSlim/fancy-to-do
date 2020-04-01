@@ -6,6 +6,7 @@ const {compare} = require('../helpers/bcrypt');
 class AuthController {
   static register(req, res, next) {
     const {name, email, password} = req.body
+    console.log(req.body, 'masuk ga sih?')
     User.create({
       id: uuid(),
       name,

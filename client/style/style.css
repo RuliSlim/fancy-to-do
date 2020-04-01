@@ -3,6 +3,9 @@ body{
   background: url('https://www.teknofluida.id/assets/unify/img/bg/pattern/doodles.png');
   
 }
+.main-body{
+  margin: 5em;
+}
 .main{
   background: white;
   min-height: 95vh;

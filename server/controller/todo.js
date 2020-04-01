@@ -14,8 +14,10 @@ class TodoController {
       b64: true
     }
     const UserId = req.user.sub;
+    let todo;
     Todo.findAll({where: {UserId}})
       .then((todos) => {
+        todo = todos
         todos.forEach(el => text += el.title + ', ');
         parameters.src = text;
         return axios({
@@ -25,10 +27,7 @@ class TodoController {
         })
       })
       .then(response => {
-        res.status(200).send(`<audio controls
-        src=${response.data} >
-       </audio>
-       `)
+        res.status(200).json({voice: response.data, todo})
       })
       .catch((err) => {
         next(err);
