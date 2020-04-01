@@ -1,0 +1,59 @@
+body{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: url('https://www.teknofluida.id/assets/unify/img/bg/pattern/doodles.png');
+  
+}
+.main{
+  background: white;
+  min-height: 95vh;
+}
+.header{
+  background: url('https://images.unsplash.com/photo-1506422748879-887454f9cdff?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80') ;
+  background-size: cover;
+  padding: 30px 0;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+}
+.date-text{
+  text-align: center; 
+  color: gray;
+  font-size: x-small;
+}
+.main{
+  box-shadow: 0.1px 0.1px 10px 2.5px rgba(0, 0, 0, .38);
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 15px;
+}
+.card{
+  border: 0;
+}
+.card:hover{
+  box-shadow: 0.1px 0.1px 10px 2.5px rgba(0, 0, 0, .38);
+}
+.card-title{
+  color: mediumseagreen;
+  font-weight: bold;
+}
+.form-div{
+  border: 1px solid rgba(0, 0, 0, .38);
+  
+}
+div.col-lg-4.form-div{
+  padding : 0;
+}
+.form-div .form-head{
+  background:mediumseagreen;
+  text-align: center;
+  justify-content: center;
+  padding: 10px;
+  color: white;
+  font-weight: bold;
+}
+.form-body{
+}
+.btn-google {
+color: white;
+background-color: #ea4335;
+}

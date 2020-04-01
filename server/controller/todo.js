@@ -5,6 +5,7 @@ const queryString   = require('query-string');
 
 class TodoController {
   static getAll(req, res, next) {
+    console.log('masuk todos ga sih')
     let text = 'Your Todo list are'
     const parameters = {
       key: key,

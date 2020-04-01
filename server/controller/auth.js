@@ -22,18 +22,22 @@ class AuthController {
 
   static login(req, res, next) {
     const {email, password} = req.body;
+    console.log(req.body)
+    console.log('Masuk sini ga?')
+    console.log(email, password)
     User.findOne({where: {email}})
       .then((user) => {
         if (!user) {
           throw new Error('User not found');
         }
 
-        const token = signToken(user);
         if (compare(password, user.password)) {
+          const token = signToken(user);
           res.status(201).json({user, access_token: token});
+        } else {
+          throw new Error('Email or Password incorrect');
         }
 
-        throw new Error('Email or Password incorrect');
       })
       .catch(err => next(err));
   }
