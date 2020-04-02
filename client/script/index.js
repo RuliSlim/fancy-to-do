@@ -3,7 +3,9 @@ let token = localStorage.getItem('access_token') || null;
 let show = false;
 
 checkLogin()
-
+// $( function() {
+//   $( "#datepicker" ).datepicker();
+// } );
 // $( document ).ready(function() {
 //   $('.main-body, .user').hide();
 //   checkLogin()
@@ -45,36 +47,36 @@ function checkLogin() {
 }
 
 //  GOOGLE FUNCTION
-  function onSignIn(googleUser) {
-    let id_token = googleUser.getAuthResponse().id_token;
-    $.ajax({
-      url: 'http://localhost:3000/auth/google',
-      method: 'POST',
-      data: {
-        id_token
-      }
+function onSignIn(googleUser) {
+  let id_token = googleUser.getAuthResponse().id_token;
+  $.ajax({
+    url: 'http://localhost:3000/auth/google',
+    method: 'POST',
+    data: {
+      id_token
+    }
+  })
+  .done(result => {
+    localStorage.setItem('access_token', result.access_token)
+    token = localStorage.access_token
+    console.log(result, 'RESUL NIH');
+    // location.reload();
+    // window.location.reload();
+    checkLogin()
+    $('#alert').empty();
+  })
+  .fail(err => {
+    console.log(err)
+    let errors = ['Email has registered']
+    errors.forEach(el => {
+      $('#alert').append(`
+        <div class="alert alert-primary" role="alert">
+          ${el}
+        </div>
+      `)
     })
-    .done(result => {
-      localStorage.setItem('access_token', result.access_token)
-      token = localStorage.access_token
-      console.log(result, 'RESUL NIH');
-      // location.reload();
-      // window.location.reload();
-      checkLogin()
-      $('#alert').empty();
-    })
-    .fail(err => {
-      console.log(err)
-      let errors = ['Email has registered']
-      errors.forEach(el => {
-        $('#alert').append(`
-          <div class="alert alert-primary" role="alert">
-            ${el}
-          </div>
-        `)
-      })
-    })
-  }
+  })
+}
 
 // REGISTER FUNCTION
 $( "#form-register" ).submit(function( event ) {
@@ -224,6 +226,10 @@ $('#show-form-todo').click(function() {
           <input type="text" class="form-control" id="title-todo" name="title" placeholder="Title">
         </div>
         <div class="form-group">
+          <label for="datepicker">Dude date</label>
+          <input class="form-control" id="due-date" data-toggle="datepicker">
+        </div>
+        <div class="form-group">
           <label for="description-todo">Desciption</label>
           <textarea class="form-control" id="description-todo" name="desciption" placeholder="Desciption"></textarea>
         </div>
@@ -231,6 +237,10 @@ $('#show-form-todo').click(function() {
       </form>
     `);
     $('#table').hide()
+    $('[data-toggle="datepicker"]').datepicker();
+    // $().datepicker({
+    //   format: 'yyyy-mm-dd'
+    // })
   } else {
     $('#form-todo').hide();
     $('#form-todo').empty();
@@ -254,11 +264,16 @@ $('#content').on('click', '#edit', function(e) {
         <input type="text" class="form-control" id="title-todo" name="title" value="${result.title}">
       </div>
       <div class="form-group">
+        <label for="datepicker">Dude date</label>
+        <input class="form-control" id="due-date" data-toggle="datepicker" value="${moment(result.due_date).format('MM-DD-YYYY')}">
+      </div>
+      <div class="form-group">
         <label for="description-todo">Desciption</label>
         <textarea class="form-control" id="description-todo" name="desciption" placeholder="Desciption">${result.description}</textarea>
       </div>
       <button id="form-edit" value="${result.id}" class="btn btn-primary btn-block">Edit</button>
     `);
+    $('[data-toggle="datepicker"]').datepicker();
     $('#form-todo').show();
     $('#table').hide();
     $('#alert').empty();
@@ -303,7 +318,8 @@ function ajaxFunction(type='POST', id=0) {
   }
   let title = $('#title-todo').val();
   let description = $('#description-todo').val();
-  let due_date = $('#due-date-todo').val() || new Date(Date.now());    
+  let due_date = $('#due-date').val() || new Date(Date.now());
+  console.log(due_date)  
   $.ajax({
     url: url,
     method: type,
