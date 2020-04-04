@@ -2,7 +2,6 @@
 let token = localStorage.getItem('access_token') || null;
 let userName = localStorage.getItem('name') || null;
 let show = false;
-
 $( document ).ready(function() {
   $('select').formSelect();
   $('.collapsible').collapsible();
