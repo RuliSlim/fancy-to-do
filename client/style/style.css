@@ -29,6 +29,44 @@ body{
 }
 /*  */
 
+/* auth */
+#form-user .collapsible{
+  width: 100%;
+}
+
+/* table */
+#show-form-todo{
+  /* float: left; */
+  margin-bottom: 2.5em;
+}
+.cols{
+  /* width: 5%; */
+  size: 5%;
+}
+.title{
+  margin-left: 1em;
+  font-size: 2em;
+}
+#content{
+  width: 125%;
+  display: flex;
+  flex-direction: column;
+  text-transform: capitalize;
+}
+#content p{
+  margin-left: 5em;
+  font-size: 1.5em;
+}
+.options{
+  float: right;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+.options button{
+  margin: 0.5em;
+}
+
 .main{
   background: white;
   min-height: 95vh;

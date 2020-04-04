@@ -1,9 +1,11 @@
 // everything()
 let token = localStorage.getItem('access_token') || null;
+let userName = localStorage.getItem('name') || null;
 let show = false;
-// checkLogin()
+
 $( document ).ready(function() {
-  // $('.main-body, .user').hide();
+  $('select').formSelect();
+  $('.collapsible').collapsible();
   checkLogin()
 
   // REGISTER FUNCTION
@@ -24,7 +26,9 @@ $( document ).ready(function() {
     })
     .done(result => {
         localStorage.setItem('access_token', result.access_token)
+        localStorage.setItem('name', result.user)
         token = localStorage.access_token
+        userName = localStorage.name
         checkLogin()
       }
     )
@@ -45,51 +49,6 @@ $( document ).ready(function() {
     })
   });
 
-  // test
-  let resu;
-  $('#download').click(function (e) { 
-    e.preventDefault();
-    $.ajax({
-      url: 'http://localhost:3000/voices',
-      method: 'POST',
-    })
-    .done(result => {
-      console.log(result)
-      resu = result
-    })
-  });
-
-  function getData(audioFile, callback) {
-    var reader = new FileReader();
-    reader.onload = function(event) {
-        var data = event.target.result.split(',')
-         , decodedImageData = btoa(data[1]);                    // the actual conversion of data from binary to base64 format
-        callback(decodedImageData);        
-    };
-    reader.readAsDataURL(audioFile);
-}
-
-// getData(resu, (data) => {
-//   $("#source").attr("src", data);
-// })
-  $("#btn").click(function(){
-    alert('yo')
-    // const encodedData = window.btoa(resu); // encode a string
-    // const decodedData = window.atob(encodedData); 
-    getData(resu, (data) => {
-      $("#source").attr("src", data);
-    })
-    
-    // var binary= convertDataURIToBinary(data);
-    // var blob = new Blob([resu], {type : 'audio/ogg'});
-    // var blobUrl = URL.createObjectURL(blob);
-    // $('body').append('<br> Blob URL : <a href="'+blobUrl+'" target="_blank">'+blobUrl+'</a><br>');
-    // $("#source").attr("src", decodedData);
-    // $("#audio")[0].pause();
-    // $("#audio")[0].load();//suspends and restores all audio element
-    // $("#audio")[0].oncanplaythrough =  $("#audio")[0].play();
-  });
-
   // LOGIN FUNCTION
   $('#form-login').submit(function(e){
     e.preventDefault();
@@ -101,8 +60,10 @@ $( document ).ready(function() {
       data: {email, password}
     })
     .done((result) => {
+      console.log(result)
       let {access_token} = result
       localStorage.setItem('access_token', access_token)
+      localStorage.setItem('name', result.user)
       checkLogin();
       $('#alert').empty();
     })
@@ -127,6 +88,7 @@ $( document ).ready(function() {
   $('#logout').click(function(e) {
     e.preventDefault();
     localStorage.removeItem('access_token');
+    localStorage.removeItem('name');
     var auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {});
     $('#email2').val('');
@@ -139,6 +101,21 @@ $( document ).ready(function() {
     checkLogin()
   })
 
+  // User Home
+  $('#todos').click(function (e) { 
+    e.preventDefault();
+    $('#list-todo').show();
+    $('#user-home').hide();
+  });
+
+  // navbar home
+  $('#home').click(function (e) { 
+    e.preventDefault();
+    $('#user-home').show();
+    $('#list-todo').hide();
+    $('#list-project').hide();
+  });
+
   // datepicker
   $('.datepicker').datepicker();
   $('.timepicker').timepicker();
@@ -146,20 +123,20 @@ $( document ).ready(function() {
   // SHOW FORM ADD
   $('#show-form-todo').click(function() {
     $('#form-todo').toggle();
-    $('#table').toggle();
+    $('#content').toggle();
     $('#title-todo').val('');
     $('#due-date').val('');
     $('#description-todo').val('');
-    $('#form-todo button').html('Add').val('');
+    $('#form-todo #submit').html('Add').val('');
     $('.timepicker').val('');
     $('#form-todo form').removeClass('edit-todo').addClass('add-todo');
     show = !show
-    show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Add Todo')
+    show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Add')
   })
   // SHOW EDIT TODO
   $('#content').on('click', '#edit', function(e) {
     $('#form-todo').toggle();
-    $('#table').toggle();
+    $('#content').toggle();
     $('#form-todo form').removeClass('add-todo').addClass('edit-todo');
     $.ajax({
       url: 'http://localhost:3000/todos/' + e.currentTarget.value,
@@ -171,12 +148,13 @@ $( document ).ready(function() {
     .done(result => {
       $('#title-todo').val(result.title);
       $('#due-date').val(moment(result.due_date).format('MM-DD-YYYY'));
+      $('#due-date').removeAttr('placeholder');
       $('#description-todo').val(result.description);
-      $('#form-todo button').html('Edit').val(result.id);
+      $('#form-todo #submit').html('Edit').val(result.id);
       $('.timepicker').val(result.time);
       $('#alert').empty();
       show = !show
-      show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Add Todo')  
+      show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Add')  
     })
     .fail(err => {
       if(err.responseJSON.errors) {
@@ -200,16 +178,16 @@ $( document ).ready(function() {
     e.preventDefault();
     ajaxFunction('POST')
     show = !show
-    show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Add Todo')  
+    show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Add')  
   })
   
   // PUT FUNCTION
   $('#form-todo').on('submit', '.edit-todo', function(e) {
-    const id = $('#form-todo button').val();
+    const id = $('#form-todo #submit').val();
     e.preventDefault();
     ajaxFunction('PUT', id);
     show = !show
-    show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Add Todo')  
+    show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Add')  
   })
 
   // DELETE
@@ -232,13 +210,33 @@ function checkLogin() {
 
 // REFRESH FUNCTION
 function loggedIn() {
-  $('#list-todo, #logout').show();
+  $('#user-home, #logout').show();
   $('#voice').remove();
   $('#content').empty();
   $('#form-todo').hide();
   // $('#form-todo').empty();
-  $('#table').show()
-  $('#show-form-todo').show()
+  $('#content').show();
+  $('#show-form-todo').show();
+  $.ajax({
+    url: 'http://localhost:3000/projects',
+    method: 'GET',
+    headers: {
+      access_token: token
+    }
+  })
+  .done(result => {
+    console.log(result, 'Projects')
+    let name = localStorage.getItem('name')
+    $('.display-4').html(`Hello, ${name}`);
+    result.forEach(el => {
+      $('#projectid').append(
+        `
+        <option value="${el.Project.id}">${el.Project.name}</option>
+        `
+      )
+    })
+  })
+  .catch(err => console.log(err))
   $.ajax({
     url: 'http://localhost:3000/todos',
     method: 'GET',
@@ -247,24 +245,44 @@ function loggedIn() {
     }
   })
   .done(result => {
-    $('#table').append(`
-      <audio controls id="voice">
-        <source src="${result.voice}" type="audio/mpeg">
-      </audio>
+    console.log(result, 'resul dari todos')
+    let todo = result.todo.filter(el => !el.ProjectId)
+    
+    $('#list-todo h3').append(`
+    <audio controls id="voice">
+      <source src="${result.voice}" type="audio/mpeg">
+    </audio>
     `);
-    result.todo.forEach(el => {
+    todo.forEach(el => {
+      let status = `
+      <a class="btn-floating btn-large" id="show-form-todo">
+        <i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i>
+      </a>
+      `
+      if(el.status == true) {
+        status = `
+        <a class="btn-floating btn-large" id="show-form-todo">
+          <i class="fa fa-check" aria-hidden="true"></i>
+        </a>
+        `
+      }
+      
       $('#content').append(
         `
-          <tr>
-            <th>${el.id}</th>
-            <td>${el.title}</td>
-            <td>${el.description}</td>
-            <td>${moment(el.due_date).format('MMM Do YY, h:mm a')}</td>
-            <td>
-              <button class="btn btn-warning" value="${el.id}" id="edit">Edit</button>
-              <button class="btn btn-danger" value="${el.id}" id="delete">Delete</button>
-            </td>
-          </tr>
+        <li class="collection-item pink lighten-5">
+          ${status}
+          <span class="title">${el.title}</span>
+          <div class="options">
+            <button id="edit" value="${el.id}" class="btn-floating btn-large cyan pulse"><i class="fas fa-pen"></i></button>
+            <button id="delete" value="${el.id}" class="btn-floating btn-large red pulse"><i class="fa fa-trash" aria-hidden="true"></i></button>
+          </div>
+          <p class="white-text">
+            ${el.description}<br>
+          </p>
+          <p class="white-text">
+            ${moment(el.due_date).format('MMM Do YY, h:mm a')}
+          </p>
+        </li>
         `
       )
     });
@@ -298,10 +316,12 @@ function ajaxFunction(type='POST', id=0) {
   let title = $('#title-todo').val();
   let description = $('#description-todo').val();
   let due_date = $('#due-date').val() || new Date(Date.now());
+  let status = $('#status')[0].checked
+  let projectid = $('#projectid').val();
   $.ajax({
     url: url,
     method: type,
-    data: {title, description, due_date},
+    data: {title, description, due_date, status},
     headers: {
       access_token: token
     }
@@ -338,7 +358,9 @@ function onSignIn(googleUser) {
     }
   })
   .done(result => {
+    console.log(result)
     localStorage.setItem('access_token', result.access_token)
+    localStorage.setItem('name', result.user)
     token = localStorage.access_token
     checkLogin()
     $('#alert').empty();

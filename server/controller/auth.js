@@ -20,8 +20,8 @@ class AuthController {
     })
       .then(user => {
         const token = signToken(user);
-        console.log(token, 'Ini user')
-        res.status(201).json({user, access_token: token});
+        console.log(token, 'Ini user');
+        res.status(201).json({user: user.name, access_token: token});
       })
       .catch(err => next(err));
   }
@@ -33,13 +33,14 @@ class AuthController {
     console.log(email, password)
     User.findOne({where: {email}})
       .then((user) => {
+        console.log(user)
         if (!user) {
           throw new Error('User not found');
         }
 
         if (compare(password, user.password)) {
           const token = signToken(user);
-          res.status(201).json({user, access_token: token});
+          res.status(201).json({user: user.name, access_token: token});
         } else {
           throw new Error('Email or Password incorrect');
         }
@@ -81,7 +82,7 @@ class AuthController {
         })
         .then(user => {
           const token = signToken(user);
-          res.status(201).json({user, access_token: token});
+          res.status(201).json({user: user.name, access_token: token});
           console.log(user, 'User')
         })
         .catch(err => next(err));

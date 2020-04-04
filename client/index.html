@@ -7,152 +7,154 @@
   <title>Fancy ToDos</title>
   <!-- Compiled and minified CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-  <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/sketchy/bootstrap.min.css" rel="stylesheet" integrity="sha384-2kOE+STGAkgemIkUbGtoZ8dJLqfvJ/xzRnimSkQN7viOfwRvWseF7lqcuNXmjwrL" crossorigin="anonymous">
-  <link rel="stylesheet" href="./style/style.css">
 
+  <!-- <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/sketchy/bootstrap.min.css" rel="stylesheet" integrity="sha384-2kOE+STGAkgemIkUbGtoZ8dJLqfvJ/xzRnimSkQN7viOfwRvWseF7lqcuNXmjwrL" crossorigin="anonymous"> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+  <link rel="stylesheet" href="./style/style.css">
+  <!-- JQUERY -->
   <script
   src="https://code.jquery.com/jquery-3.4.1.js"
   integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
   crossorigin="anonymous"></script>
   <script src="https://apis.google.com/js/platform.js" async defer></script>
-  <link  href="./style/datepicker.css" rel="stylesheet">
-  <script src="./script//datepicker.js"></script>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="/">Navbar</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
+  <nav>
+    <div class="nav-wrapper">
+      <a href="#" class="brand-logo">Logo</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
         <li class="nav-item active">
-          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link" id="home">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="btn-floating btn-large green pulse user" id="logout">
+            <i class="fas fa-sign-out-alt"></i>
+          </a>
         </li>
       </ul>
     </div>
-    <button class="user btn btn-primary" id="logout">Logout</button>
   </nav>
+  
   <div id="alert"></div>
   <div class="container">
     <div class="row">
-      <div class="col">
+      <div class="col s12">
 
-        <!-- TEST
-        <button id="download">Run Example</button>
-        <br />
-        <audio controls="true" id="audio" src=""></audio>
-
-        <audio id="audio" controls>
-          <source id="source" src="" type="audio/ogg"/>
-        </audio>
-        <br>
-        <button id="btn">generate</button> -->
-
-        <!-- Register -->
-        <div class="main-body" id="form-user" >
-          <div class="m-5">
-            <div class="form-head d-flex justify-content-center">
-                <h5 class="display-2">Lazy ToDos</h5>
+        <!-- Auth -->
+        <div class="main-body popout" id="form-user">
+          <ul class="collapsible">
+            <li>
+              <div class="collapsible-header"><i class="fa fa-user-plus" aria-hidden="true"></i>Register</div>
+              <div class="collapsible-body">
+                <span>                      
+                  <form id="form-register" >
+                    <div class="form-group">
+                      <label for="first_name">First Name</label>
+                      <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter your first name">
+                    </div>
+                    <div class="form-group">
+                      <label for="first_name">Last Name</label>
+                      <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter your last name">
+                    </div>
+                    <div class="form-group">
+                      <label for="email">Email address</label>
+                      <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email">
+                      <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                    </div>
+                    <div class="form-group">
+                      <label for="password">Password</label>
+                      <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                    </div>
+                    <div class="form-group">
+                      <button type="submit" class="btn btn-primary btn-block">Register</button>
+                    </div>
+                  </form>
+                </span>
+              </div>
+            </li>
+            <li>
+              <div class="collapsible-header"><i class="fas fa-user"></i>Login</div>
+              <div class="collapsible-body">
+                <span>
+                  <form id="form-login">
+                    <div class="form-group">
+                      <label for="email">Email address</label>
+                      <input type="email" class="form-control" id="email2" name="email" aria-describedby="emailHelp" placeholder="Enter email">
+                      <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                    </div>
+                    <div class="form-group">
+                      <label for="password">Password</label>
+                      <input type="password" class="form-control" id="password2" name="password" placeholder="Password">
+                    </div>
+                    <div class="form-group">
+                      <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    </div>
+                  </form>
+                </span>
             </div>
-            <div class="accordion" id="accordionExample">
-              <div class="card d-flex flex-row">
-                <div class="card-header width-15 card-form" id="headingOne">
-                  <h5 class="mb-0">
-                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                      Register
-                    </button>
-                  </h5>
-                </div>
-                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                  <div class="card-body">
-                    <div class="form-body p-3">
-                      <form id="form-register" >
-                          <div class="form-group">
-                            <label for="first_name">First Name</label>
-                            <input type="text" class="form-control" id="first_name" name="first_name" placeholder="Enter your first name">
-                          </div>
-                          <div class="form-group">
-                            <label for="first_name">Last Name</label>
-                            <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Enter your last name">
-                          </div>
-                          <div class="form-group">
-                            <label for="email">Email address</label>
-                            <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email">
-                            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-                          </div>
-                          <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-                          </div>
-                          <div class="form-group">
-                            <button type="submit" class="btn btn-primary btn-block">Register</button>
-                          </div>
-                      </form>
-                    </div>
-                  </div>
-                </div>
+            </li>
+            <li>
+              <div class="collapsible-header"><i class="fa fa-google-plus-official" aria-hidden="true"></i>Google</div>
+              <div class="collapsible-body">
+                <span>
+                  <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                </span>
               </div>
-              <div class="card d-flex flex-row">
-                <div class="card-header width-15 card-form" id="headingOne">
-                  <h5 class="mb-0">
-                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                      Login
-                    </button>
-                  </h5>
-                </div>
-                <div id="collapseTwo" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                  <div class="card-body text-center">
-                    <div class="form-body p-3">
-                      <form id="form-login">
-                        <div class="form-group">
-                          <label for="email">Email address</label>
-                          <input type="email" class="form-control" id="email2" name="email" aria-describedby="emailHelp" placeholder="Enter email">
-                          <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-                        </div>
-                        <div class="form-group">
-                          <label for="password">Password</label>
-                          <input type="password" class="form-control" id="password2" name="password" placeholder="Password">
-                        </div>
-                        <div class="form-group">
-                          <button type="submit" class="btn btn-primary btn-block">Login</button>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="card">
-                <div class="card-header text-center" id="headinThree">
-                  <h5 class="mb-0">
-                    <button class="btn btn-link" type="button" id="google" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
-                      Login With Other
-                    </button>
-                  </h5>
-                </div>
-                <div id="collapseThree" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                  <div class="card-body d-flex justify-content-around">
-                    <div class="g-signin2" data-onsuccess="onSignIn"></div>
-                  </div>
-                </div>
-              </div>
+            </li>
+          </ul>
+        </div>
+
+        
+
+        <!-- User Home -->
+        <div class="main-body user-home" id="user-home">
+          <div class="jumbotron">
+            <h1 class="display-4">Hello, world!</h1>
+            <p class="lead">
+              Welcome to Lazy Todo!
+            </p>
+            <hr class="my-4">
+            <p>This app can organize your todo, furthermore you can create Todo Project and manage it with other.</p>
+            <div class="mt-5 d-flex justify-content-around">
+              <a class="btn btn-primary btn-lg" id="projects" role="button">Project Todos</a>
+              <a class="btn btn-primary btn-lg" id="todos" role="button">Personal Todos</a>
             </div>
           </div>
         </div>
 
-        <!-- table -->
+        
         <div class="main-body" id="list-todo">
+          <h3>
+            Todo List
+            <br>
+            <small class="text-muted">Voice</small>
+          </h3>
+            <a class="btn-floating btn-large green pulse" id="show-form-todo">
+              <i class="fa fa-plus-circle"  aria-hidden="true"></i>
+            </a>
+            <ul id="content" class="collection">
+            </ul>
+        </div>
+
+        <!-- Project -->
+        <div class="main-body" id="list-project">
+          <h3>
+            Project List
+            <br>
+            <small class="text-muted">Click Project name to see detail</small>
+          </h3>
           <div class="d-flex flex-column">
             <div class="align-self-end mt-5 mb-0">
-              <a class="btn btn-success" id="show-form-todo">Add Todo</a>
+              <a class="btn btn-success" id="show-form-todo">Add</a>
             </div>
             <table class="table" id="table">
               <thead class="thead-dark">
-                <tr>
-                  <th scope="col">Id</th>
+                <tr class="d-flex">
+                  <th scope="col"></th>
                   <th scope="col">Title</th>
                   <th scope="col">Description</th>
                   <th scope="col">Due Date</th>
+                  <th scope="col"></th>
                   <th scope="col">Options</th>
                 </tr>
               </thead>
@@ -165,23 +167,39 @@
         <!-- Form -->
         <div class="main-body" id="form-todo">
           <form id="form-add-todo" class="">
-            <div class="form-group">
+            <div class="input-field col s8">
               <label for="title">Title</label>
               <input type="text" class="form-control" id="title-todo" name="title" placeholder="Title">
             </div>
-            <div class="form-group">
-              <label for="description-todo">Desciption</label>
-              <textarea class="form-control" id="description-todo" name="desciption" placeholder="Desciption"></textarea>
+            <div class="switch col s4">
+              <label for="">Status</label><br>
+              <label>
+                No
+                <input type="checkbox" id="status" name="status">
+                <span class="lever"></span>
+                Yes
+              </label>
             </div>
-            <div class="form-group">
+            <div class="input-field col s12">
+              <label for="description-todo">Desciption</label>
+              <textarea class="materialize-textarea" id="description-todo" name="desciption" placeholder="Desciption"></textarea>
+            </div>
+            <div class="input-field col s6">
               <label for="datepicker">Due date</label>
               <input class="form-control datepicker" id="due-date" type="text" data-toggle="datepicker">
+            </div>
+            <div class="input-field col s6">
               <label>Time</label>
-              <small id="helpId" class="text-muted">Optional</small>
               <input type="text" class="timepicker">
             </div>
-            <div class="form-group">
-              <button type="submit" class="btn btn-primary btn-block">Add</button>
+            <div class="input-field col s12">
+              <select id="projectid">
+                <option value="" disabled selected>Choose your project</option>
+              </select>
+              <label>Project</label>
+            </div>
+            <div class="input-field col s12">
+              <button type="submit" class="btn btn-primary btn-block" id="submit">Add</button>
             </div>
           </form>
         </div>
@@ -191,9 +209,9 @@
   <script src="./script/index.js"></script>
   <!-- Compiled and minified JavaScript -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
+  <script src="extensions/resizable/bootstrap-table-resizable.js"></script>
+  <!-- momment -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
 </html>
