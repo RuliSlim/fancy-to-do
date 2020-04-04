@@ -1,5 +1,6 @@
 const TodoController = require('./todo');
-const AuthController = require('./auth')
+const AuthController = require('./auth');
+const VoiceController = require('./voice')
 
 class IndexController {
   static getAll(req, res) {
@@ -10,5 +11,6 @@ class IndexController {
 module.exports = {
   IndexController,
   TodoController,
-  AuthController
+  AuthController,
+  VoiceController
 }

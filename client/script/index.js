@@ -1,166 +1,234 @@
 // everything()
 let token = localStorage.getItem('access_token') || null;
 let show = false;
+// checkLogin()
+$( document ).ready(function() {
+  // $('.main-body, .user').hide();
+  checkLogin()
 
-checkLogin()
-// $( function() {
-//   $( "#datepicker" ).datepicker();
-// } );
-// $( document ).ready(function() {
-//   $('.main-body, .user').hide();
-//   checkLogin()
-// });
+  // REGISTER FUNCTION
+  $("#form-register").submit(function( event ) {
+    event.preventDefault();
+    let name = $('#first_name').val();
+    let last_name = $('#last_name').val();
+    let email = $('#email').val();
+    let password = $('#password').val();
+    $.ajax({
+      url: 'http://localhost:3000/auth/register',
+      method: 'POST',
+      data: {
+        name,
+        email,
+        password
+      }
+    })
+    .done(result => {
+        localStorage.setItem('access_token', result.access_token)
+        token = localStorage.access_token
+        checkLogin()
+      }
+    )
+    .fail(err => {
+      if(err.responseJSON.errors) {
+        let errors = err.responseJSON.errors
+        errors.forEach(el => {
+          $('#alert').append(`
+            <div class="alert alert-primary" role="alert">
+              ${el.message}
+            </div>
+          `)
+        })
+      }
+      if(err.responseJSON.error) {
+        $('#alert').append(`<div class="alert alert-primary" role="alert">${err.responseJSON.error}</div>`)
+      }
+    })
+  });
+
+  // test
+  let resu;
+  $('#download').click(function (e) { 
+    e.preventDefault();
+    $.ajax({
+      url: 'http://localhost:3000/voices',
+      method: 'POST',
+    })
+    .done(result => {
+      console.log(result)
+      resu = result
+    })
+  });
+
+  function getData(audioFile, callback) {
+    var reader = new FileReader();
+    reader.onload = function(event) {
+        var data = event.target.result.split(',')
+         , decodedImageData = btoa(data[1]);                    // the actual conversion of data from binary to base64 format
+        callback(decodedImageData);        
+    };
+    reader.readAsDataURL(audioFile);
+}
+
+// getData(resu, (data) => {
+//   $("#source").attr("src", data);
+// })
+  $("#btn").click(function(){
+    alert('yo')
+    // const encodedData = window.btoa(resu); // encode a string
+    // const decodedData = window.atob(encodedData); 
+    getData(resu, (data) => {
+      $("#source").attr("src", data);
+    })
+    
+    // var binary= convertDataURIToBinary(data);
+    // var blob = new Blob([resu], {type : 'audio/ogg'});
+    // var blobUrl = URL.createObjectURL(blob);
+    // $('body').append('<br> Blob URL : <a href="'+blobUrl+'" target="_blank">'+blobUrl+'</a><br>');
+    // $("#source").attr("src", decodedData);
+    // $("#audio")[0].pause();
+    // $("#audio")[0].load();//suspends and restores all audio element
+    // $("#audio")[0].oncanplaythrough =  $("#audio")[0].play();
+  });
+
+  // LOGIN FUNCTION
+  $('#form-login').submit(function(e){
+    e.preventDefault();
+    let email = $('#email2').val();
+    let password = $('#password2').val();
+    $.ajax({
+      url: 'http://localhost:3000/auth/login',
+      method: 'POST',
+      data: {email, password}
+    })
+    .done((result) => {
+      let {access_token} = result
+      localStorage.setItem('access_token', access_token)
+      checkLogin();
+      $('#alert').empty();
+    })
+    .fail(err => {
+      if(err.responseJSON.errors) {
+        let errors = err.responseJSON.errors
+        errors.forEach(el => {
+          $('#alert').append(`
+            <div class="alert alert-primary" role="alert">
+              ${el.message}
+            </div>
+          `)
+        })
+      }
+      if(err.responseJSON.error) {
+        $('#alert').append(`<div class="alert alert-primary" role="alert">${err.responseJSON.error}</div>`)
+      }
+    })
+  })
+
+  // LOGOUT FUNCTION
+  $('#logout').click(function(e) {
+    e.preventDefault();
+    localStorage.removeItem('access_token');
+    var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {});
+    $('#email2').val('');
+    $('#password2').val('');
+    $('#alert').empty();
+    $('#first_name').val('');
+    $('#last_name').val('');
+    $('#email').val('');
+    $('#password').val('');
+    checkLogin()
+  })
+
+  // datepicker
+  $('.datepicker').datepicker();
+  $('.timepicker').timepicker();
+  
+  // SHOW FORM ADD
+  $('#show-form-todo').click(function() {
+    $('#form-todo').toggle();
+    $('#table').toggle();
+    $('#title-todo').val('');
+    $('#due-date').val('');
+    $('#description-todo').val('');
+    $('#form-todo button').html('Add').val('');
+    $('.timepicker').val('');
+    $('#form-todo form').removeClass('edit-todo').addClass('add-todo');
+    show = !show
+    show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Add Todo')
+  })
+  // SHOW EDIT TODO
+  $('#content').on('click', '#edit', function(e) {
+    $('#form-todo').toggle();
+    $('#table').toggle();
+    $('#form-todo form').removeClass('add-todo').addClass('edit-todo');
+    $.ajax({
+      url: 'http://localhost:3000/todos/' + e.currentTarget.value,
+      method: 'GET',
+      headers: {
+        access_token: token
+      }
+    })
+    .done(result => {
+      $('#title-todo').val(result.title);
+      $('#due-date').val(moment(result.due_date).format('MM-DD-YYYY'));
+      $('#description-todo').val(result.description);
+      $('#form-todo button').html('Edit').val(result.id);
+      $('.timepicker').val(result.time);
+      $('#alert').empty();
+      show = !show
+      show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Add Todo')  
+    })
+    .fail(err => {
+      if(err.responseJSON.errors) {
+        let errors = err.responseJSON.errors
+        errors.forEach(el => {
+          $('#alert').append(`
+            <div class="alert alert-primary" role="alert">
+              ${el.message}
+            </div>
+          `)
+        })
+      }
+      if(err.responseJSON.error) {
+        $('#alert').append(`<div class="alert alert-primary" role="alert">${err.responseJSON.error}</div>`)
+      }
+    })
+  })
+
+  // ADD FUNCTION
+  $('#form-todo').on('submit', '.add-todo', function(e) {
+    e.preventDefault();
+    ajaxFunction('POST')
+    show = !show
+    show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Add Todo')  
+  })
+  
+  // PUT FUNCTION
+  $('#form-todo').on('submit', '.edit-todo', function(e) {
+    const id = $('#form-todo button').val();
+    e.preventDefault();
+    ajaxFunction('PUT', id);
+    show = !show
+    show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Add Todo')  
+  })
+
+  // DELETE
+  $('#content').on('click', '#delete', function(e) {
+    ajaxFunction('DELETE', e.currentTarget.value)
+  })
+});
 
 function checkLogin() {
   $('.main-body, .user').hide();
   token = localStorage.getItem('access_token') || null;
   show = false;
+  $('#alert').empty();
   if (token) {
     loggedIn()
   } else {
-    $('#login, #register').show();
-    let showUserRegister = true
-    let showUserLogin = false
-    $('#login').click(function() {
-      showUserRegister = !showUserRegister
-      showUserLogin = !showUserLogin
-      if (showUserRegister) {
-        $('#register-form').hide()
-        $('#login-form').show()
-      } else {
-        $('#register-form').hide()
-        $('#login-form').hide()
-      }
-    });
-    $('#register').click(function() {
-      showUserLogin = !showUserLogin
-      showUserRegister = !showUserRegister
-      if (showUserLogin) {
-        $('#register-form').show()
-        $('#login-form').hide()
-      } else {
-        $('#register-form').hide()
-        $('#login-form').hide()
-      }
-    });
+    $('#form-user').show();
   }
 }
-
-//  GOOGLE FUNCTION
-function onSignIn(googleUser) {
-  let id_token = googleUser.getAuthResponse().id_token;
-  $.ajax({
-    url: 'http://localhost:3000/auth/google',
-    method: 'POST',
-    data: {
-      id_token
-    }
-  })
-  .done(result => {
-    localStorage.setItem('access_token', result.access_token)
-    token = localStorage.access_token
-    console.log(result, 'RESUL NIH');
-    // location.reload();
-    // window.location.reload();
-    checkLogin()
-    $('#alert').empty();
-  })
-  .fail(err => {
-    console.log(err)
-    let errors = ['Email has registered']
-    errors.forEach(el => {
-      $('#alert').append(`
-        <div class="alert alert-primary" role="alert">
-          ${el}
-        </div>
-      `)
-    })
-  })
-}
-
-// REGISTER FUNCTION
-$( "#form-register" ).submit(function( event ) {
-  event.preventDefault();
-  let name = $('#first_name').val();
-  let last_name = $('#last_name').val();
-  let email = $('#email').val();
-  let password = $('#password').val();
-  console.log(name, email, password)
-  $.ajax({
-    url: 'http://localhost:3000/auth/register',
-    method: 'POST',
-    data: {
-      name,
-      email,
-      password
-    }
-  })
-  .done(result => {
-      localStorage.setItem('access_token', result.access_token)
-      token = localStorage.access_token
-      console.log(result, 'RESUL NIH');
-      checkLogin()
-      $('#alert').empty();
-    }
-  )
-  .fail(error => {
-    console.log(error, 'ERROR INI')
-    let errors = error.responseJSON.errors
-    errors.forEach(el => {
-      $('#alert').append(`
-        <div class="alert alert-primary" role="alert">
-          ${el.message}
-        </div>
-      `)
-    })
-    }
-  )
-});
-
-// LOGIN FUNCTION
-$('#form-login').submit(function(e){
-  e.preventDefault();
-  alert('u')
-  let email = $('#email2').val();
-  let password = $('#password2').val();
-  console.log(email)
-  console.log(password)
-  $.ajax({
-    url: 'http://localhost:3000/auth/login',
-    method: 'POST',
-    data: {email, password}
-  })
-  .done((result) => {
-    let {access_token} = result
-    console.log(result)
-    console.log(access_token)
-    localStorage.setItem('access_token', access_token)
-    checkLogin();
-    $('#alert').empty();
-  })
-  .fail(err => {
-    console.log(err, 'Error')
-    let errors = err.responseJSON.errors
-    errors.forEach(el => {
-      $('#alert').append(`
-        <div class="alert alert-primary" role="alert">
-          ${el.message}
-        </div>
-      `)
-    })
-  })
-})
-
-// LOGOUT FUNCTION
-$('#logout').click(function(e) {
-  e.preventDefault();
-  localStorage.removeItem('access_token');
-  var auth2 = gapi.auth2.getAuthInstance();
-  auth2.signOut().then(function () {
-    console.log('User signed out.');
-  });
-  checkLogin()
-})
 
 // REFRESH FUNCTION
 function loggedIn() {
@@ -168,8 +236,9 @@ function loggedIn() {
   $('#voice').remove();
   $('#content').empty();
   $('#form-todo').hide();
-  $('#form-todo').empty();
+  // $('#form-todo').empty();
   $('#table').show()
+  $('#show-form-todo').show()
   $.ajax({
     url: 'http://localhost:3000/todos',
     method: 'GET',
@@ -202,111 +271,21 @@ function loggedIn() {
     $('#alert').empty();
   })
   .fail(err => {
-    console.log(err)
-    let errors = err.responseJSON.errors
-    errors.forEach(el => {
-      $('#alert').append(`
-        <div class="alert alert-primary" role="alert">
-          ${el.message}
-        </div>
-      `)
-    })
-  })
-}
-
-// SHOW FORM ADD
-$('#show-form-todo').click(function() {
-  show = !show
-  if (show) {
-    $('#form-todo').show();
-    $('#form-todo').append(`
-      <form id="form-add-todo">
-        <div class="form-group">
-          <label for="title">Title</label>
-          <input type="text" class="form-control" id="title-todo" name="title" placeholder="Title">
-        </div>
-        <div class="form-group">
-          <label for="datepicker">Dude date</label>
-          <input class="form-control" id="due-date" data-toggle="datepicker">
-        </div>
-        <div class="form-group">
-          <label for="description-todo">Desciption</label>
-          <textarea class="form-control" id="description-todo" name="desciption" placeholder="Desciption"></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary btn-block">Register</button>
-      </form>
-    `);
-    $('#table').hide()
-    $('[data-toggle="datepicker"]').datepicker();
-    // $().datepicker({
-    //   format: 'yyyy-mm-dd'
-    // })
-  } else {
-    $('#form-todo').hide();
-    $('#form-todo').empty();
-    $('#table').show();
-  }
-})
-
-// SHOW EDIT TODO
-$('#content').on('click', '#edit', function(e) {
-  $.ajax({
-    url: 'http://localhost:3000/todos/' + e.currentTarget.value,
-    method: 'GET',
-    headers: {
-      access_token: token
+    if(err.responseJSON.errors) {
+      let errors = err.responseJSON.errors
+      errors.forEach(el => {
+        $('#alert').append(`
+          <div class="alert alert-primary" role="alert">
+            ${el.message}
+          </div>
+        `)
+      })
+    }
+    if(err.responseJSON.error) {
+      $('#alert').append(`<div class="alert alert-primary" role="alert">${err.responseJSON.error}</div>`)
     }
   })
-  .done(result => {
-    $('#form-todo').append(`
-      <div class="form-group">
-        <label for="title">Title</label>
-        <input type="text" class="form-control" id="title-todo" name="title" value="${result.title}">
-      </div>
-      <div class="form-group">
-        <label for="datepicker">Dude date</label>
-        <input class="form-control" id="due-date" data-toggle="datepicker" value="${moment(result.due_date).format('MM-DD-YYYY')}">
-      </div>
-      <div class="form-group">
-        <label for="description-todo">Desciption</label>
-        <textarea class="form-control" id="description-todo" name="desciption" placeholder="Desciption">${result.description}</textarea>
-      </div>
-      <button id="form-edit" value="${result.id}" class="btn btn-primary btn-block">Edit</button>
-    `);
-    $('[data-toggle="datepicker"]').datepicker();
-    $('#form-todo').show();
-    $('#table').hide();
-    $('#alert').empty();
-  })
-  .fail(err => {
-    let errors = err.responseJSON.errors
-    errors.forEach(el => {
-      $('#alert').append(`
-        <div class="alert alert-primary" role="alert">
-          ${el.message}
-        </div>
-      `)
-    })
-  })
-})
-
-// ADD FUNCTION
-$('#form-todo').on('submit', '#form-add-todo', function(e) {
-  e.preventDefault();
-  ajaxFunction('POST')
-})
-
-// PUT FUNCTION
-$('#form-todo').on('click', '#form-edit', function(e) {
-  e.preventDefault();
-  ajaxFunction('PUT', e.currentTarget.value)
-})
-
-// DELETE
-$('#content').on('click', '#delete', function(e) {
-  console.log(e.currentTarget.value)
-  ajaxFunction('DELETE', e.currentTarget.value)
-})
+}
 
 // AJAX TODOS
 function ajaxFunction(type='POST', id=0) {
@@ -319,7 +298,6 @@ function ajaxFunction(type='POST', id=0) {
   let title = $('#title-todo').val();
   let description = $('#description-todo').val();
   let due_date = $('#due-date').val() || new Date(Date.now());
-  console.log(due_date)  
   $.ajax({
     url: url,
     method: type,
@@ -329,19 +307,79 @@ function ajaxFunction(type='POST', id=0) {
     }
   })
   .done(result => {
-    console.log(result)
     checkLogin()
     $('#alert').empty();
   })
   .fail(err => {
-    console.log(err)
-    let errors = err.responseJSON.errors
-    errors.forEach(el => {
-      $('#alert').append(`
-        <div class="alert alert-primary" role="alert">
-          ${el.message}
-        </div>
-      `)
-    })
+    if(err.responseJSON.errors) {
+      let errors = err.responseJSON.errors
+      errors.forEach(el => {
+        $('#alert').append(`
+          <div class="alert alert-primary" role="alert">
+            ${el.message}
+          </div>
+        `)
+      })
+    }
+    if(err.responseJSON.error) {
+      $('#alert').append(`<div class="alert alert-primary" role="alert">${err.responseJSON.error}</div>`)
+    }
   })
 }
+
+//  GOOGLE FUNCTION
+function onSignIn(googleUser) {
+  let id_token = googleUser.getAuthResponse().id_token;
+  $.ajax({
+    url: 'http://localhost:3000/auth/google',
+    method: 'POST',
+    data: {
+      id_token
+    }
+  })
+  .done(result => {
+    localStorage.setItem('access_token', result.access_token)
+    token = localStorage.access_token
+    checkLogin()
+    $('#alert').empty();
+  })
+  .fail(err => {
+    if(err.responseJSON.errors) {
+      let errors = err.responseJSON.errors
+      errors.forEach(el => {
+        $('#alert').append(`
+          <div class="alert alert-primary" role="alert">
+            ${el.message}
+          </div>
+        `)
+      })
+    }
+    if(err.responseJSON.error) {
+      $('#alert').append(`<div class="alert alert-primary" role="alert">${err.responseJSON.error}</div>`)
+    }
+  })
+}
+
+
+// audio
+// function working(text) {
+//   var url = 'http://localhost:8080/nlc/synthesize';
+//   var req = {
+//       method: 'POST',
+//       url: url,
+//       responseType: 'blob',
+//       data: {
+//           "text": text
+//       },
+//       headers: {
+//           'Content-Type': 'application/json',
+//       }
+//   }
+
+//   $http(req).then(function(response) {
+//       console.log(response);
+//       audio.pause();
+//       audio.src = URL.createObjectURL(response.data);
+//       audio.play();
+//   })
+// };

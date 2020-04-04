@@ -5,8 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="google-signin-client_id" content="667543392441-en6mu5ob950dgl2o6vckvbc00cmcdg38.apps.googleusercontent.com">
   <title>Fancy ToDos</title>
+  <!-- Compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
   <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/sketchy/bootstrap.min.css" rel="stylesheet" integrity="sha384-2kOE+STGAkgemIkUbGtoZ8dJLqfvJ/xzRnimSkQN7viOfwRvWseF7lqcuNXmjwrL" crossorigin="anonymous">
   <link rel="stylesheet" href="./style/style.css">
+
   <script
   src="https://code.jquery.com/jquery-3.4.1.js"
   integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
@@ -28,8 +31,6 @@
         </li>
       </ul>
     </div>
-    <button class="user btn btn-primary" id="register">Register</button>
-    <button class="user btn btn-primary" id="login">Login</button>
     <button class="user btn btn-primary" id="logout">Logout</button>
   </nav>
   <div id="alert"></div>
@@ -37,22 +38,33 @@
     <div class="row">
       <div class="col">
 
+        <!-- TEST
+        <button id="download">Run Example</button>
+        <br />
+        <audio controls="true" id="audio" src=""></audio>
+
+        <audio id="audio" controls>
+          <source id="source" src="" type="audio/ogg"/>
+        </audio>
+        <br>
+        <button id="btn">generate</button> -->
+
         <!-- Register -->
-        <div class="main-body" id="register-form" >
+        <div class="main-body" id="form-user" >
           <div class="m-5">
-            <div class="form-head">
-                <h5>REGISTER</h5>
+            <div class="form-head d-flex justify-content-center">
+                <h5 class="display-2">Lazy ToDos</h5>
             </div>
             <div class="accordion" id="accordionExample">
-              <div class="card">
-                <div class="card-header" id="headingOne">
+              <div class="card d-flex flex-row">
+                <div class="card-header width-15 card-form" id="headingOne">
                   <h5 class="mb-0">
                     <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                       Register
                     </button>
                   </h5>
                 </div>
-                <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
                   <div class="card-body">
                     <div class="form-body p-3">
                       <form id="form-register" >
@@ -73,14 +85,16 @@
                             <label for="password">Password</label>
                             <input type="password" class="form-control" id="password" name="password" placeholder="Password">
                           </div>
-                        <button type="submit" class="btn btn-primary btn-block">Register</button>
+                          <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-block">Register</button>
+                          </div>
                       </form>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="card">
-                <div class="card-header" id="headingOne">
+              <div class="card d-flex flex-row">
+                <div class="card-header width-15 card-form" id="headingOne">
                   <h5 class="mb-0">
                     <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
                       Login
@@ -88,7 +102,7 @@
                   </h5>
                 </div>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                  <div class="card-body">
+                  <div class="card-body text-center">
                     <div class="form-body p-3">
                       <form id="form-login">
                         <div class="form-group">
@@ -100,53 +114,31 @@
                           <label for="password">Password</label>
                           <input type="password" class="form-control" id="password2" name="password" placeholder="Password">
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block">Register</button>
+                        <div class="form-group">
+                          <button type="submit" class="btn btn-primary btn-block">Login</button>
+                        </div>
                       </form>
                     </div>
                   </div>
                 </div>
               </div>
               <div class="card">
-                <div class="card-header" id="headinThree">
+                <div class="card-header text-center" id="headinThree">
                   <h5 class="mb-0">
                     <button class="btn btn-link" type="button" id="google" data-toggle="collapse" data-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
-                      Login With Google
+                      Login With Other
                     </button>
                   </h5>
                 </div>
                 <div id="collapseThree" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExample">
-                  <div class="card-body">
+                  <div class="card-body d-flex justify-content-around">
                     <div class="g-signin2" data-onsuccess="onSignIn"></div>
-                    <!-- <a href="#" onclick="signOut();">Sign out</a> -->
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-        <!-- Login -->
-        <!-- <div class="main-body" id="login-form">
-          <div class="m-5">
-            <div class="form-head">
-                <h5>LOGIN</h5>
-            </div>
-            <div class="form-body p-3">
-              <form id="form-login">
-                <div class="form-group">
-                  <label for="email">Email address</label>
-                  <input type="email" class="form-control" id="email2" name="email" aria-describedby="emailHelp" placeholder="Enter email">
-                  <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-                </div>
-                <div class="form-group">
-                  <label for="password">Password</label>
-                  <input type="password" class="form-control" id="password2" name="password" placeholder="Password">
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">Register</button>
-              </form>
-            </div>
-          </div>
-        </div> -->
 
         <!-- table -->
         <div class="main-body" id="list-todo">
@@ -172,13 +164,35 @@
 
         <!-- Form -->
         <div class="main-body" id="form-todo">
+          <form id="form-add-todo" class="">
+            <div class="form-group">
+              <label for="title">Title</label>
+              <input type="text" class="form-control" id="title-todo" name="title" placeholder="Title">
+            </div>
+            <div class="form-group">
+              <label for="description-todo">Desciption</label>
+              <textarea class="form-control" id="description-todo" name="desciption" placeholder="Desciption"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="datepicker">Due date</label>
+              <input class="form-control datepicker" id="due-date" type="text" data-toggle="datepicker">
+              <label>Time</label>
+              <small id="helpId" class="text-muted">Optional</small>
+              <input type="text" class="timepicker">
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary btn-block">Add</button>
+            </div>
+          </form>
         </div>
-
       </div>
     </div>
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js"></script>
   <script src="./script/index.js"></script>
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 </body>
