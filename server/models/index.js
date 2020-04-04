@@ -17,7 +17,17 @@ db.Sequelize = Sequelize;
 
 module.exports = db;
 
-db.Todo = require('./todo')
-db.User = require('./user')
-db.User.hasMany(db.Todo)
-db.Todo.belongsTo(db.User)
+db.Todo = require('./todo');
+db.User = require('./user');
+db.Project = require('./project');
+db.ProjectUser = require('./projectuser')
+
+db.User.hasMany(db.Todo);
+db.Project.hasMany(db.Todo);
+db.Todo.belongsTo(db.User);
+db.Todo.belongsTo(db.Project);
+
+db.User.belongsToMany(db.Project, {through: db.ProjectUser});
+db.Project.belongsToMany(db.User, {through: db.ProjectUser});
+db.ProjectUser.belongsTo(db.Project);
+db.ProjectUser.belongsTo(db.User);

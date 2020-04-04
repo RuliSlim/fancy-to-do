@@ -42,6 +42,9 @@ Todo.init({
         msg: 'You have to login'
       }
     }
+  },
+  ProjectId: {
+    type: DataTypes.INTEGER
   }
 }, {
   sequelize
@@ -49,6 +52,7 @@ Todo.init({
 
 Todo.associate = function(models) {
   Todo.belongsTo(models.User);
+  Todo.belongsTo(models.Project);
 }
 
 module.exports = Todo

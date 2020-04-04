@@ -16,7 +16,7 @@ class TodoController {
     const UserId = req.user.sub;
     let todo;
     Todo.findAll({where: {UserId}})
-      .then((todos) => {
+      .then(todos => {
         todo = todos
         todos.forEach(el => text += el.title + ', ');
         parameters.src = text;
@@ -50,7 +50,7 @@ class TodoController {
   }
   
   static create(req, res, next) {
-    const {title, description, due_date} = req.body;
+    const {title, description, due_date, ProjectId} = req.body;
     const UserId = req.user.sub;
     User.findOne({where: {id: UserId}})
       .then(user => {
@@ -62,7 +62,8 @@ class TodoController {
           title,
           description,
           due_date,
-          UserId
+          UserId,
+          ProjectId
         })
       })
       .then(todo => {

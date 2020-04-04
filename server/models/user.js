@@ -58,13 +58,14 @@ User.init({
 }, {
   hooks: {
     beforeCreate: (user, options) => {
-      const secured = hashedPassword(user.password)
-      user.password = secured
+      const secured = hashedPassword(user.password);
+      user.password = secured;
     }
   }, sequelize})
 
 User.associate = function (models, options) {
-  User.hasMany(models.Todo)
+  User.hasMany(models.Todo);
+  User.belongsToMany(models.Project, {through: 'ProjectUser'});
 }
 
 module.exports = User

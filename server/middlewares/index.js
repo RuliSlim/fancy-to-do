@@ -1,5 +1,5 @@
 const {decodeToken} = require('../helpers/jwt');
-const {User, Todo}        = require('../models');
+const {User, Todo, Project}        = require('../models');
 
 class Middleware {
   static authenticate(req, res, next) {
@@ -17,6 +17,7 @@ class Middleware {
           }
           next();
         })
+        .catch(err => next());
     }
   }
 
@@ -33,12 +34,38 @@ class Middleware {
           }
           next();
         })
-        .catch(err => next(err));
+        .catch(err => next());
     } else {
       Todo.findAll({where: {UserId}})
         .then(todos => {
           if (!todos.length) {
-            res.status(200).json({message: 'You dont have todos'});
+            return res.status(200).json({message: 'You dont have todos'});
+          }
+          next();
+        })
+        .catch(err => next(err));
+    }
+  }
+
+  static authorizedProject(req, res, next) {
+    const UserId = req.user.sub;
+    if (req.params.id) {
+      Project.findByPk(req.params.id)
+        .then(project => {
+          if (!project) {
+            throw new Error('Project not found');
+          }
+          if (project.UserId != UserId) {
+            throw new Error('You are not authorized');
+          }
+          next();
+        })
+        .catch(err => next(err));
+    } else {
+      Project.findAll({where: {UserId}})
+        .then(project => {
+          if (!project.length) {
+            return res.status(200).json({message: 'You dont have project yet'});
           }
           next();
         })
@@ -47,14 +74,14 @@ class Middleware {
   }
 
   static errorHandler(err, req, res, next) {
-    console.log(err, 'IKI MESSAGE');
-    console.log(err.message, 'IKI MESSAGE');
+    // console.log(err, 'IKI MESSAGE');
     if (err.name == 'SequelizeValidationError') {
+      console.log('masuk sini 400')
       return res.status(400).json(err);
     } 
 
     if (err.name == 'JsonWebTokenError' || err.message == 'You are not authorized') {
-      console.log('masuk sini')
+      console.log('masuk sini 401 jswon')
       if (!err.message) {
         err.message = 'Invalid token, please relogin'
       }
@@ -62,15 +89,17 @@ class Middleware {
     }
     
     if (err.message === ('Todo not found' || 'User not found')) {
+      console.log('masuk sini 404')
       return res.status(404).json({error: err.message});
     } 
     
     if (typeof err.message === 'string') {
+      console.log('masuk sini 400 laen2')
       return res.status(400).json({error: err.message});
+    } else {
+      console.log('masuk 5000');
+      return res.status(500).json(err);
     }
-    
-    console.log('masuk 5000');
-    return res.status(500).json(err);
   }
 }
 
