@@ -1,0 +1,38 @@
+{
+  "development": {
+    "username": "admin",
+    "password": "delapan8",
+    "database": "fancy_todos",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "jwt": {
+    "secret": "ini secret looooh, gaboleh tau weeee:p"
+  },
+  "rrs": {
+    "key": "3f706bcdf7684708aae1dbc40ed9d792"
+  },
+  "google": {
+    "client_id": "667543392441-en6mu5ob950dgl2o6vckvbc00cmcdg38.apps.googleusercontent.com",
+    "client_secret": "F7oPH4c5wvhGHaRQXsebu4I7",
+    "redirect_uri": "auth/google/redirect"
+  },
+  "watson": {
+    "key": "niZkDwVw7e28vh1BuVsfIr3HkPiUiD55y0QJKHSlzJ4p",
+    "URL": "https://api.us-south.text-to-speech.watson.cloud.ibm.com/instances/56b47c47-6c67-4126-b966-768cc58104ee"
+  }
+}
