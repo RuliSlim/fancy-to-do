@@ -21,7 +21,7 @@ $( document ).ready(function() {
     let email = $('#email').val();
     let password = $('#password').val();
     $.ajax({
-      url: 'http://localhost:3000/auth/register',
+      url: 'https://lazy-todos.herokuapp.com/auth/register',
       method: 'POST',
       data: {
         name,
@@ -60,7 +60,7 @@ $( document ).ready(function() {
     let email = $('#email2').val();
     let password = $('#password2').val();
     $.ajax({
-      url: 'http://localhost:3000/auth/login',
+      url: 'https://lazy-todos.herokuapp.com/auth/login',
       method: 'POST',
       data: {email, password}
     })
@@ -141,7 +141,7 @@ $( document ).ready(function() {
     $('#content').toggle();
     $('#form-todo form').removeClass('add-todo').addClass('edit-todo');
     $.ajax({
-      url: 'http://localhost:3000/todos/' + e.currentTarget.value,
+      url: 'https://lazy-todos.herokuapp.com/todos/' + e.currentTarget.value,
       method: 'GET',
       headers: {
         access_token: token
@@ -221,7 +221,7 @@ function loggedIn() {
   $('#show-form-todo').show();
   $('#show-form-todo').html('Create')
   $.ajax({
-    url: 'http://localhost:3000/projects',
+    url: 'https://lazy-todos.herokuapp.com/projects',
     method: 'GET',
     headers: {
       access_token: token
@@ -240,7 +240,7 @@ function loggedIn() {
   })
   .fail(err => console.log(err))
   $.ajax({
-    url: 'http://localhost:3000/todos',
+    url: 'https://lazy-todos.herokuapp.com/todos',
     method: 'GET',
     headers: {
       access_token: token
@@ -331,9 +331,9 @@ function loggedIn() {
 function ajaxFunction(type='POST', id=0) {
   let url
   if(type == 'POST') {
-    url = 'http://localhost:3000/todos'
+    url = 'https://lazy-todos.herokuapp.com/todos'
   } else {
-    url = 'http://localhost:3000/todos/' + id
+    url = 'https://lazy-todos.herokuapp.com/todos/' + id
   }
   let title = $('#title-todo').val();
   let description = $('#description-todo').val();
@@ -377,7 +377,7 @@ function ajaxFunction(type='POST', id=0) {
 function onSignIn(googleUser) {
   let id_token = googleUser.getAuthResponse().id_token;
   $.ajax({
-    url: 'http://localhost:3000/auth/google',
+    url: 'https://lazy-todos.herokuapp.com/auth/google',
     method: 'POST',
     data: {
       id_token
