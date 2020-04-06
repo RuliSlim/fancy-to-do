@@ -7,6 +7,7 @@
   <title>Fancy ToDos</title>
   <!-- Compiled and minified CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons"rel="stylesheet">
 
   <!-- <link href="https://stackpath.bootstrapcdn.com/bootswatch/4.4.1/sketchy/bootstrap.min.css" rel="stylesheet" integrity="sha384-2kOE+STGAkgemIkUbGtoZ8dJLqfvJ/xzRnimSkQN7viOfwRvWseF7lqcuNXmjwrL" crossorigin="anonymous"> -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
@@ -19,8 +20,8 @@
   <script src="https://apis.google.com/js/platform.js" async defer></script>
 </head>
 <body>
-  <nav>
-    <div class="nav-wrapper">
+  <nav class="teal lighten-2">
+    <div class="nav-wrapper container">
       <a href="#" class="brand-logo">Logo</a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
         <li class="nav-item active">
@@ -107,8 +108,8 @@
         
 
         <!-- User Home -->
-        <div class="main-body user-home" id="user-home">
-          <div class="jumbotron">
+        <div class="main-body user-home valign-wrapper" id="user-home">
+          <div class="jumbotron center-align">
             <h1 class="display-4">Hello, world!</h1>
             <p class="lead">
               Welcome to Lazy Todo!
@@ -122,7 +123,7 @@
           </div>
         </div>
 
-        
+        <!-- LIST TODO -->
         <div class="main-body" id="list-todo">
           <h3>
             Todo List
@@ -132,7 +133,7 @@
             <a class="btn-floating btn-large green pulse" id="show-form-todo">
               <i class="fa fa-plus-circle"  aria-hidden="true"></i>
             </a>
-            <ul id="content" class="collection">
+            <ul id="content" class="collection rounded">
             </ul>
         </div>
 
@@ -193,8 +194,7 @@
               <input type="text" class="timepicker">
             </div>
             <div class="input-field col s12">
-              <select id="projectid">
-                <option value="" disabled selected>Choose your project</option>
+              <select id="projectid" class="materialSelect">
               </select>
               <label>Project</label>
             </div>
@@ -209,7 +209,7 @@
   <script src="./script/index.js"></script>
   <!-- Compiled and minified JavaScript -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  <script src="extensions/resizable/bootstrap-table-resizable.js"></script>
+
   <!-- momment -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

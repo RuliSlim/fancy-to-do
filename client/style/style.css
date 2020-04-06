@@ -3,6 +3,16 @@ body{
   background: url('https://www.teknofluida.id/assets/unify/img/bg/pattern/doodles.png');
   
 }
+nav{
+  height: 5.25em;
+}
+nav ul{
+  margin-top: 0.5em;
+}
+.jumbotron{
+  margin: 0 auto;
+  margin-top: 8em;
+}
 /* FORM AUTH */
 .width-15{
   width: 15%;
@@ -35,6 +45,23 @@ body{
 }
 
 /* table */
+.collection{
+  width: 100%;
+  border: 0px;
+}
+.collection li{
+  width: 100% !important;
+  border-radius: 2em;
+  margin: 0.5em 0px !important;
+}
+.status{
+  margin-top: 2em;
+}
+.done{
+  text-decoration: line-through;
+  font-style: italic;
+  opacity: 0.25;
+}
 #show-form-todo{
   /* float: left; */
   margin-bottom: 2.5em;

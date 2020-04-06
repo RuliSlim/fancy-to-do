@@ -2,10 +2,16 @@
 let token = localStorage.getItem('access_token') || null;
 let userName = localStorage.getItem('name') || null;
 let show = false;
+// checkLogin()
 $( document ).ready(function() {
-  $('select').formSelect();
+  // M.AutoInit();
+  $('.materialSelect').formSelect();
+  $('.materialSelect').on('contentChanged', function() {
+    $(this).formSelect();
+  });
   $('.collapsible').collapsible();
   checkLogin()
+
 
   // REGISTER FUNCTION
   $("#form-register").submit(function( event ) {
@@ -110,9 +116,7 @@ $( document ).ready(function() {
   // navbar home
   $('#home').click(function (e) { 
     e.preventDefault();
-    $('#user-home').show();
-    $('#list-todo').hide();
-    $('#list-project').hide();
+    checkLogin();
   });
 
   // datepicker
@@ -212,10 +216,11 @@ function loggedIn() {
   $('#user-home, #logout').show();
   $('#voice').remove();
   $('#content').empty();
+  $('select').empty();
   $('#form-todo').hide();
-  // $('#form-todo').empty();
   $('#content').show();
   $('#show-form-todo').show();
+  $('#show-form-todo').html('Add')
   $.ajax({
     url: 'http://localhost:3000/projects',
     method: 'GET',
@@ -228,12 +233,12 @@ function loggedIn() {
     let name = localStorage.getItem('name')
     $('.display-4').html(`Hello, ${name}`);
     result.forEach(el => {
-      $('#projectid').append(
-        `
-        <option value="${el.Project.id}">${el.Project.name}</option>
-        `
-      )
+      let nullP = '<option value="null">Choose your project</option>'
+      let project = $('<option>').attr('value', el.Project.id).text(el.Project.name)
+      $('#projectid').append(nullP)
+      $('#projectid').append(project)
     })
+    $("#projectid").trigger('contentChanged');
   })
   .catch(err => console.log(err))
   $.ajax({
@@ -245,7 +250,7 @@ function loggedIn() {
   })
   .done(result => {
     console.log(result, 'resul dari todos')
-    let todo = result.todo.filter(el => !el.ProjectId)
+    let todo = result.todo.filter(el => el.ProjectId == null)
     
     $('#list-todo h3').append(`
     <audio controls id="voice">
@@ -254,28 +259,35 @@ function loggedIn() {
     `);
     todo.forEach(el => {
       let status = `
-      <a class="btn-floating btn-large" id="show-form-todo">
+      <a class="btn-floating btn-large status" id="show-form-todo">
         <i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i>
       </a>
       `
       if(el.status == true) {
         status = `
-        <a class="btn-floating btn-large" id="show-form-todo">
+        <a class="btn-floating btn-large status" id="show-form-todo">
           <i class="fa fa-check" aria-hidden="true"></i>
         </a>
+        `
+      }
+      let title = `<li class="collection-item pink lighten-5">
+      `
+
+      if(el.status) {
+        title = ` <li class="collection-item pink lighten-5 done">
         `
       }
       
       $('#content').append(
         `
-        <li class="collection-item pink lighten-5">
-          ${status}
-          <span class="title">${el.title}</span>
+        ${title}
+        ${status}
+        <span class="title" >${el.title}</span>
           <div class="options">
             <button id="edit" value="${el.id}" class="btn-floating btn-large cyan pulse"><i class="fas fa-pen"></i></button>
             <button id="delete" value="${el.id}" class="btn-floating btn-large red pulse"><i class="fa fa-trash" aria-hidden="true"></i></button>
           </div>
-          <p class="white-text">
+          <p class="white-text truncate">
             ${el.description}<br>
           </p>
           <p class="white-text">
@@ -316,11 +328,16 @@ function ajaxFunction(type='POST', id=0) {
   let description = $('#description-todo').val();
   let due_date = $('#due-date').val() || new Date(Date.now());
   let status = $('#status')[0].checked
-  let projectid = $('#projectid').val();
+  let ProjectId = $('#projectid').val();
+  let data= {title, description, due_date, status, ProjectId}
+  if(ProjectId == 'null') {
+    data = {title, description, due_date, status}
+  }
+  console.log(projectid)
   $.ajax({
     url: url,
     method: type,
-    data: {title, description, due_date, status},
+    data,
     headers: {
       access_token: token
     }

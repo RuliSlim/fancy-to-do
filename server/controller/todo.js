@@ -15,7 +15,7 @@ class TodoController {
     }
     const UserId = req.user.sub;
     let todo;
-    Todo.findAll({where: {UserId}})
+    Todo.findAll({where: {UserId}, order: [['status', 'ASC']]})
       .then(todos => {
         todo = todos
         todos.forEach(el => text += el.title + ', ');
