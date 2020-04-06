@@ -4,14 +4,14 @@ let userName = localStorage.getItem('name') || null;
 let show = false;
 // checkLogin()
 $( document ).ready(function() {
-  // M.AutoInit();
+  M.AutoInit();
   $('.materialSelect').formSelect();
   $('.materialSelect').on('contentChanged', function() {
     $(this).formSelect();
   });
-  $('.collapsible').collapsible();
-  checkLogin()
 
+  $('.collapsible').collapsible();
+  checkLogin();
 
   // REGISTER FUNCTION
   $("#form-register").submit(function( event ) {
@@ -65,7 +65,6 @@ $( document ).ready(function() {
       data: {email, password}
     })
     .done((result) => {
-      console.log(result)
       let {access_token} = result
       localStorage.setItem('access_token', access_token)
       localStorage.setItem('name', result.user)
@@ -130,11 +129,11 @@ $( document ).ready(function() {
     $('#title-todo').val('');
     $('#due-date').val('');
     $('#description-todo').val('');
-    $('#form-todo #submit').html('Add').val('');
+    $('#form-todo #submit').html('Create').val('');
     $('.timepicker').val('');
     $('#form-todo form').removeClass('edit-todo').addClass('add-todo');
     show = !show
-    show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Add')
+    show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Create')
   })
   // SHOW EDIT TODO
   $('#content').on('click', '#edit', function(e) {
@@ -153,11 +152,11 @@ $( document ).ready(function() {
       $('#due-date').val(moment(result.due_date).format('MM-DD-YYYY'));
       $('#due-date').removeAttr('placeholder');
       $('#description-todo').val(result.description);
-      $('#form-todo #submit').html('Edit').val(result.id);
+      $('#form-todo #submit').html('Update').val(result.id);
       $('.timepicker').val(result.time);
       $('#alert').empty();
       show = !show
-      show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Add')  
+      show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Create')  
     })
     .fail(err => {
       if(err.responseJSON.errors) {
@@ -181,7 +180,7 @@ $( document ).ready(function() {
     e.preventDefault();
     ajaxFunction('POST')
     show = !show
-    show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Add')  
+    show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Create')  
   })
   
   // PUT FUNCTION
@@ -190,7 +189,7 @@ $( document ).ready(function() {
     e.preventDefault();
     ajaxFunction('PUT', id);
     show = !show
-    show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Add')  
+    show ? $('#show-form-todo').html('Back') : $('#show-form-todo').html('Create')  
   })
 
   // DELETE
@@ -220,7 +219,7 @@ function loggedIn() {
   $('#form-todo').hide();
   $('#content').show();
   $('#show-form-todo').show();
-  $('#show-form-todo').html('Add')
+  $('#show-form-todo').html('Create')
   $.ajax({
     url: 'http://localhost:3000/projects',
     method: 'GET',
@@ -229,18 +228,17 @@ function loggedIn() {
     }
   })
   .done(result => {
-    console.log(result, 'Projects')
     let name = localStorage.getItem('name')
     $('.display-4').html(`Hello, ${name}`);
+    let nullP = '<option value="null">Choose your project</option>'
+    $('#projectid').append(nullP)
     result.forEach(el => {
-      let nullP = '<option value="null">Choose your project</option>'
       let project = $('<option>').attr('value', el.Project.id).text(el.Project.name)
-      $('#projectid').append(nullP)
       $('#projectid').append(project)
     })
     $("#projectid").trigger('contentChanged');
   })
-  .catch(err => console.log(err))
+  .fail(err => console.log(err))
   $.ajax({
     url: 'http://localhost:3000/todos',
     method: 'GET',
@@ -249,7 +247,6 @@ function loggedIn() {
     }
   })
   .done(result => {
-    console.log(result, 'resul dari todos')
     let todo = result.todo.filter(el => el.ProjectId == null)
     
     $('#list-todo h3').append(`
@@ -278,14 +275,23 @@ function loggedIn() {
         `
       }
       
-      $('#content').append(
-        `
+      $('#content').append(`
+      <li>
         ${title}
         ${status}
         <span class="title" >${el.title}</span>
           <div class="options">
             <button id="edit" value="${el.id}" class="btn-floating btn-large cyan pulse"><i class="fas fa-pen"></i></button>
-            <button id="delete" value="${el.id}" class="btn-floating btn-large red pulse"><i class="fa fa-trash" aria-hidden="true"></i></button>
+            <a class="btn-floating pulse red btn-large waves-effect waves-light btn modal-trigger" href="#${el.id}"><i class="fa fa-trash" aria-hidden="true"></i></a>
+            <div id="${el.id}" class="modal modal-fixed-footer">
+              <div class="modal-content">
+                <h4>Are you sure you want to delete ${el.title}</h4>
+              </div>
+              <div class="modal-footer">
+                <a class="modal-close waves-effect waves-green btn-flat">Cancel</a>
+                <button value="${el.id}" id="delete" class="modal-close waves-effect waves-green btn-flat">Confirm</button>
+              </div>
+            </div>
           </div>
           <p class="white-text truncate">
             ${el.description}<br>
@@ -296,6 +302,11 @@ function loggedIn() {
         </li>
         `
       )
+      $('.modal').modal();
+      $('.modal').on('contentChanged', function() {
+        $(this).modal();
+      })
+      $(".modal").trigger('contentChanged');
     });
     $('#alert').empty();
   })
@@ -333,7 +344,6 @@ function ajaxFunction(type='POST', id=0) {
   if(ProjectId == 'null') {
     data = {title, description, due_date, status}
   }
-  console.log(projectid)
   $.ajax({
     url: url,
     method: type,
@@ -374,7 +384,6 @@ function onSignIn(googleUser) {
     }
   })
   .done(result => {
-    console.log(result)
     localStorage.setItem('access_token', result.access_token)
     localStorage.setItem('name', result.user)
     token = localStorage.access_token
@@ -397,27 +406,3 @@ function onSignIn(googleUser) {
     }
   })
 }
-
-
-// audio
-// function working(text) {
-//   var url = 'http://localhost:8080/nlc/synthesize';
-//   var req = {
-//       method: 'POST',
-//       url: url,
-//       responseType: 'blob',
-//       data: {
-//           "text": text
-//       },
-//       headers: {
-//           'Content-Type': 'application/json',
-//       }
-//   }
-
-//   $http(req).then(function(response) {
-//       console.log(response);
-//       audio.pause();
-//       audio.src = URL.createObjectURL(response.data);
-//       audio.play();
-//   })
-// };

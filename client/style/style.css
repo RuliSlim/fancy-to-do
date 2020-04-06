@@ -45,6 +45,12 @@ nav ul{
 }
 
 /* table */
+.options #edit{
+  margin-top: 2.5em;
+}
+.options a{
+  margin-top: 2.5em;
+}
 .collection{
   width: 100%;
   border: 0px;

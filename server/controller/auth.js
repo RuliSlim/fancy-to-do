@@ -11,7 +11,6 @@ const client = new OAuth2Client(client_id);
 class AuthController {
   static register(req, res, next) {
     const {name, email, password} = req.body
-    console.log(req.body, 'masuk ga sih?')
     User.create({
       id: uuid(),
       name,
@@ -20,7 +19,6 @@ class AuthController {
     })
       .then(user => {
         const token = signToken(user);
-        console.log(token, 'Ini user');
         res.status(201).json({user: user.name, access_token: token});
       })
       .catch(err => next(err));
@@ -28,12 +26,8 @@ class AuthController {
 
   static login(req, res, next) {
     const {email, password} = req.body;
-    console.log(req.body)
-    console.log('Masuk sini ga?')
-    console.log(email, password)
     User.findOne({where: {email}})
       .then((user) => {
-        console.log(user)
         if (!user) {
           throw new Error('User not found');
         }
@@ -50,8 +44,6 @@ class AuthController {
   }
 
   static google(req, res, next) {
-    console.log(req.headers, 'header')
-    console.log(req.body, 'body')
     const {id_token} = req.body;
     let password = 'passwordasal'
     let email, name;
@@ -63,7 +55,6 @@ class AuthController {
           const payload = ticket.getPayload();
           email = payload['email'];
           name = payload['given_name'];
-          console.log(payload, 'payload dari google')
           return User.findOne({
             where: {email}
           })
@@ -83,7 +74,6 @@ class AuthController {
         .then(user => {
           const token = signToken(user);
           res.status(201).json({user: user.name, access_token: token});
-          console.log(user, 'User')
         })
         .catch(err => next(err));
   }

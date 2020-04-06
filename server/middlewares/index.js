@@ -1,5 +1,5 @@
-const {decodeToken} = require('../helpers/jwt');
-const {User, Todo, Project}        = require('../models');
+const {decodeToken}            = require('../helpers/jwt');
+const {User, Todo, Project}    = require('../models');
 
 class Middleware {
   static authenticate(req, res, next) {
@@ -17,7 +17,7 @@ class Middleware {
           }
           next();
         })
-        .catch(err => next());
+        .catch(err => next(err));
     }
   }
 
@@ -74,31 +74,25 @@ class Middleware {
   }
 
   static errorHandler(err, req, res, next) {
-    // console.log(err, 'IKI MESSAGE');
     if (err.name == 'SequelizeValidationError') {
-      console.log('masuk sini 400')
-      return res.status(400).json(err);
+      return res.status(400).json({message: 'Validation Error'});
     } 
 
     if (err.name == 'JsonWebTokenError' || err.message == 'You are not authorized') {
-      console.log('masuk sini 401 jswon')
       if (!err.message) {
         err.message = 'Invalid token, please relogin'
       }
-      return res.status(401).json({error: err.message});
+      return res.status(401).json({message: 'You are not authorized'});
     }
     
     if (err.message === ('Todo not found' || 'User not found')) {
-      console.log('masuk sini 404')
       return res.status(404).json({error: err.message});
     } 
     
     if (typeof err.message === 'string') {
-      console.log('masuk sini 400 laen2')
-      return res.status(400).json({error: err.message});
+      return res.status(400).json({message: 'err.message'});
     } else {
-      console.log('masuk 5000');
-      return res.status(500).json(err);
+      return res.status(500).json({message: 'Internal Server Error'});
     }
   }
 }

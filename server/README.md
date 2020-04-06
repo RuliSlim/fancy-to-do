@@ -14,17 +14,95 @@ ___________
 |POST|localhost:3000/todos|Create new todo|
 |GET|localhost:3000/todos/:id|Get one todo|
 |PUT|localhost:3000/todos/:id|Edit one todo|
-|PATCH|localhost:3000/todos/:id/:key|Edit specific atr todo|
 |DELETE|localhost:3000/todos/:id|Delete todo|
 
-________
+___
+## API
+1. Google Sign In
+2. [voicerss](http://www.voicerss.org/)
+___
+## Framework
+1. Materialize
+
+___
 ## RESTful endpoints
-___________
-### GET /todos
-_______
-_Request Header_
+___
+
+### POST /auth/register
+___
+_Request Body_
 ```
-not needed
+{
+    "name": "Joko"
+	"email": "joko@gmail.com",
+	"password":"rahasia"
+}
+```
+_Response ( 201 )_
+```json
+{
+    "access_token": "token"
+}
+```
+_Response (400 - Bad Request)_
+```json
+{
+    "message": "Validation Error"
+}
+```
+_Response (500 - Server Error)_
+```json
+{
+    "message": "Internal Server Error"
+}
+```
+___
+### POST auth/login
+___
+
+_Request Body_
+```json
+{
+	"email": "joko@gmail.com",
+	"password":"rahasia"
+}
+```
+
+_Response ( 201 )_
+```json
+{
+    "access_token": "token"
+}
+```
+
+_Error Response ( 400 - email or password wrong)_
+```json
+{
+    "error": "email or password wrong"
+}
+```
+
+_Error Response ( 404 - user not found )_
+```
+{
+    "error": "user not found"
+}
+```
+_Response (500 - Server Error)_
+```json
+{
+    "message": "Internal Server Error"
+}
+```
+___
+### GET /todos
+___
+
+_Request Header_
+```json
+{
+    "access_token": "token"
+}
 ```
 
 _Request Body_
@@ -37,39 +115,49 @@ _Response (200)_
 [
     {
         "id": 3,
-        "title": "title3",
-        "description": "desc kedua333",
+        "title": "title",
+        "description": "description",
         "status": false,
-        "due_date": null,
+        "due_date": "2020-04-30T08:43:00.336Z",
         "createdAt": "2020-03-30T08:43:00.336Z",
         "updatedAt": "2020-03-30T08:43:00.336Z"
     },
     {
         "id": 2,
         "title": "coba baru",
-        "description": null,
+        "description": "description",
         "status": false,
-        "due_date": null,
+        "due_date": "2020-04-30T08:43:00.336Z",
         "createdAt": "2020-03-30T08:41:20.890Z",
         "updatedAt": "2020-03-30T08:51:54.657Z"
     }
 ]
 ```
-_Response (500)_
-
-________
-### POST /todos
-________
-_Request Header_
+_Response (500 - Server Error)_
+```json
+{
+    "message": "Internal Server Error"
+}
 ```
-not needed
+
+___
+### POST /todos
+___
+
+_Request Header_
+```json
+{
+    "access_token": "token"
+}
 ```
 
 _Request Body_
 ```json
 {
 	"title" : "Title Baru",
-	"description" : "Description bisa kosong"
+    "description" : "Description",
+    "due_date": "2020-04-30T10:24:47.438Z"
+    
 }
 ```
 
@@ -79,8 +167,8 @@ _Response (200)_
     "status": false,
     "id": 4,
     "title": "Title Baru",
-    "description": "Description bisa kosong",
-    "due_date": null,
+    "description": "Description",
+    "due_date": "2020-04-30T10:24:47.438Z",
     "updatedAt": "2020-03-30T10:24:47.438Z",
     "createdAt": "2020-03-30T10:24:47.438Z"
 }
@@ -89,50 +177,13 @@ _Response (200)_
 _Response (400 - Bad Request)_
 ```json
 {
-    "name": "SequelizeValidationError",
-    "errors": [
-        {
-            "message": "Title cannot be null",
-            "type": "notNull Violation",
-            "path": "title",
-            "value": null,
-            "origin": "CORE",
-            "instance": {
-                "status": false,
-                "id": null,
-                "description": "desc kedua553335",
-                "updatedAt": "2020-03-30T15:09:25.010Z",
-                "createdAt": "2020-03-30T15:09:25.010Z"
-            },
-            "validatorKey": "is_null",
-            "validatorName": null,
-            "validatorArgs": []
-        }
-    ]
+    "message": "Validation Error"
 }
 ```
 _Response (500 - Server Error)_
 ```json
 {
-    "name": "SequelizeConnectionError",
-    "parent": {
-        "name": "error",
-        "length": 96,
-        "severity": "FATAL",
-        "code": "28000",
-        "file": "miscinit.c",
-        "line": "607",
-        "routine": "InitializeSessionUserId"
-    },
-    "original": {
-        "name": "error",
-        "length": 96,
-        "severity": "FATAL",
-        "code": "28000",
-        "file": "miscinit.c",
-        "line": "607",
-        "routine": "InitializeSessionUserId"
-    }
+    "message": "Internal Server Error"
 }
 ```
 
@@ -140,12 +191,14 @@ ____________
 ### GET /todos/:id
 ____________
 _Request Header_
-```
-not needed
+```json
+{
+    "access_token": "token"
+}
 ```
 
 _Request Body_
-```
+```json
 not needed
 ```
 
@@ -154,9 +207,9 @@ _Response (200)_
 {
     "id": 4,
     "title": "Title Baru",
-    "description": "Description bisa kosong",
+    "description": "Description",
     "status": false,
-    "due_date": null,
+    "due_date": "2020-04-30T10:24:47.438Z",
     "createdAt": "2020-03-30T10:24:47.438Z",
     "updatedAt": "2020-03-30T10:24:47.438Z"
 }
@@ -170,40 +223,27 @@ _Response (404 - Not Found)_
 _Response (500 - Server Error)_
 ```json
 {
-    "name": "SequelizeConnectionError",
-    "parent": {
-        "name": "error",
-        "length": 96,
-        "severity": "FATAL",
-        "code": "28000",
-        "file": "miscinit.c",
-        "line": "607",
-        "routine": "InitializeSessionUserId"
-    },
-    "original": {
-        "name": "error",
-        "length": 96,
-        "severity": "FATAL",
-        "code": "28000",
-        "file": "miscinit.c",
-        "line": "607",
-        "routine": "InitializeSessionUserId"
-    }
+    "message": "Internal Server Error"
 }
 ```
 
 _________
-### POST /todos/:id
+### PUT /todos/:id
 _________
 _Request Header_
-```
-not needed
+```json
+{
+    "access_token": "token"
+}
 ```
 
 _Request Body_
 ```json
 {
-	"title" : "Kalau field kosong value berubah jadi null"
+    "title" : "Ganti Title",
+    "description": "Description",
+    "status": false,
+    "due_date": "2020-04-30T10:24:47.438Z"
 }
 ```
 
@@ -214,10 +254,10 @@ _Response (200)_
     [
         {
             "id": 4,
-            "title": "Kalau field kosong value berubah jadi null",
-            "description": null,
+            "title": "Ganti title",
+            "description": "Description",
             "status": false,
-            "due_date": null,
+            "due_date": "2020-04-30T10:24:47.438Z",
             "createdAt": "2020-03-30T10:24:47.438Z",
             "updatedAt": "2020-03-30T10:33:58.648Z"
         }
@@ -233,25 +273,7 @@ _Response (404 - Not Found)_
 _Response (500 - Server Error)_
 ```json
 {
-    "name": "SequelizeConnectionError",
-    "parent": {
-        "name": "error",
-        "length": 96,
-        "severity": "FATAL",
-        "code": "28000",
-        "file": "miscinit.c",
-        "line": "607",
-        "routine": "InitializeSessionUserId"
-    },
-    "original": {
-        "name": "error",
-        "length": 96,
-        "severity": "FATAL",
-        "code": "28000",
-        "file": "miscinit.c",
-        "line": "607",
-        "routine": "InitializeSessionUserId"
-    }
+    "message": "Inter Server Error"
 }
 ```
 
@@ -259,8 +281,16 @@ _______________
 ### DELETE /todos/:id
 _______________
 _Request Header_
+```json
+{
+    "access_token": "token"
+}
 ```
-not needed
+_Request Params_
+```json
+{
+    "id": 4
+}
 ```
 
 _Request Body_
@@ -270,11 +300,11 @@ not needed
 _Response (200)_
 ```json
 {
-    "id": 5,
-    "title": "title3",
-    "description": "desc kedua553335",
+    "id": 4,
+    "title": "Ganti Title",
+    "description": "Description",
     "status": false,
-    "due_date": null,
+    "due_date": "2020-04-30T14:40:50.790Z",
     "createdAt": "2020-03-30T14:40:50.790Z",
     "updatedAt": "2020-03-30T14:40:50.790Z"
 }
@@ -288,24 +318,6 @@ _Response (404 - Not Found)_
 _Response (500 - Server Error)_
 ```json
 {
-    "name": "SequelizeConnectionError",
-    "parent": {
-        "name": "error",
-        "length": 96,
-        "severity": "FATAL",
-        "code": "28000",
-        "file": "miscinit.c",
-        "line": "607",
-        "routine": "InitializeSessionUserId"
-    },
-    "original": {
-        "name": "error",
-        "length": 96,
-        "severity": "FATAL",
-        "code": "28000",
-        "file": "miscinit.c",
-        "line": "607",
-        "routine": "InitializeSessionUserId"
-    }
+    "message": "Internal Server Error"
 }
 ```
