@@ -1,0 +1,16 @@
+[debug] [2020-04-07T03:12:45.355Z] ----------------------------------------------------------------------
+[debug] [2020-04-07T03:12:45.357Z] Command:       /usr/local/bin/node /usr/local/bin/firebase deploy
+[debug] [2020-04-07T03:12:45.358Z] CLI Version:   8.0.1
+[debug] [2020-04-07T03:12:45.358Z] Platform:      darwin
+[debug] [2020-04-07T03:12:45.358Z] Node Version:  v13.5.0
+[debug] [2020-04-07T03:12:45.359Z] Time:          Tue Apr 07 2020 10:12:45 GMT+0700 (Western Indonesia Time)
+[debug] [2020-04-07T03:12:45.359Z] ----------------------------------------------------------------------
+[debug] [2020-04-07T03:12:45.359Z] 
+[debug] [2020-04-07T03:12:45.370Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2020-04-07T03:12:45.370Z] > authorizing via signed-in user
+[debug] [2020-04-07T03:12:45.371Z] [iam] checking project lazy-todos for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2020-04-07T03:12:45.373Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/lazy-todos:testIamPermissions  
+ {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2020-04-07T03:12:47.657Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=UTF-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Tue, 07 Apr 2020 03:12:47 GMT","server":"ESF","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","server-timing":"gfet4t7; dur=1147","alt-svc":"quic=\":443\"; ma=2592000; v=\"46,43\",h3-Q050=\":443\"; ma=2592000,h3-Q049=\":443\"; ma=2592000,h3-Q048=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,h3-T050=\":443\"; ma=2592000","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-04-07T03:12:47.660Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/lazy-todos  
+ 

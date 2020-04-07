@@ -283,13 +283,13 @@ function loggedIn() {
           <div class="options">
             <button id="edit" value="${el.id}" class="btn-floating btn-large cyan pulse"><i class="fas fa-pen"></i></button>
             <a class="btn-floating pulse red btn-large waves-effect waves-light btn modal-trigger" href="#${el.id}"><i class="fa fa-trash" aria-hidden="true"></i></a>
-            <div id="${el.id}" class="modal modal-fixed-footer">
+            <div id="${el.id}" class="modal" style="width: 10%;">
               <div class="modal-content">
-                <h4>Are you sure you want to delete ${el.title}</h4>
+                <p>Are you sure you want to delete ${el.title}?</p>
               </div>
               <div class="modal-footer">
-                <a class="modal-close waves-effect waves-green btn-flat">Cancel</a>
-                <button value="${el.id}" id="delete" class="modal-close waves-effect waves-green btn-flat">Confirm</button>
+                <a class="modal-close waves-effect waves-green btn-flat green">Cancel</a>
+                <button value="${el.id}" id="delete" class="modal-close waves-effect waves-green btn-flat red">Confirm</button>
               </div>
             </div>
           </div>
