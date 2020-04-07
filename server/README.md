@@ -29,6 +29,7 @@ ___
 ___
 
 ### POST /auth/register
+##### register new user
 ___
 _Request Body_
 ```
@@ -58,6 +59,7 @@ _Response (500 - Server Error)_
 ```
 ___
 ### POST auth/login
+##### login existing user
 ___
 
 _Request Body_
@@ -96,6 +98,7 @@ _Response (500 - Server Error)_
 ```
 ___
 ### GET /todos
+##### get all todos craeted by user
 ___
 
 _Request Header_
@@ -142,6 +145,7 @@ _Response (500 - Server Error)_
 
 ___
 ### POST /todos
+##### create new todo
 ___
 
 _Request Header_
@@ -189,6 +193,7 @@ _Response (500 - Server Error)_
 
 ____________
 ### GET /todos/:id
+##### get one todo by id
 ____________
 _Request Header_
 ```json
@@ -229,6 +234,7 @@ _Response (500 - Server Error)_
 
 _________
 ### PUT /todos/:id
+##### update existing todo
 _________
 _Request Header_
 ```json
@@ -279,6 +285,7 @@ _Response (500 - Server Error)_
 
 _______________
 ### DELETE /todos/:id
+##### delete existing todo by id
 _______________
 _Request Header_
 ```json
