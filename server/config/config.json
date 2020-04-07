@@ -2,7 +2,7 @@
   "development": {
     "username": "admin",
     "password": "delapan8",
-    "database": "fancy_todos",
+    "database": "fancy_tos",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },

@@ -89,11 +89,7 @@ class Middleware {
       return res.status(404).json({error: err.message});
     } 
     
-    if (typeof err.message === 'string') {
-      return res.status(400).json({message: 'err.message'});
-    } else {
-      return res.status(500).json({message: 'Internal Server Error'});
-    }
+    return res.status(500).json({message: 'Internal Server Error'});
   }
 }
 
